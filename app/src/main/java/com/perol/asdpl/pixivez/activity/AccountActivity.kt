@@ -49,7 +49,7 @@ class AccountActivity : AppCompatActivity() {
             }
             R.id.nav_logout -> {
                 MaterialAlertDialogBuilder(this).setTitle(R.string.logoutallaccount)
-                    .setPositiveButton(android.R.string.ok) { i, j ->
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
                         runBlocking {
                             AppDataRepository.deleteAllUser()
                         }
@@ -58,7 +58,7 @@ class AccountActivity : AppCompatActivity() {
                                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) // Clear task stack.
                                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         )
-                    }.setNeutralButton(android.R.string.cancel) { i, j ->
+                    }.setNeutralButton(android.R.string.cancel) { _, _ ->
 
                     }.create().show()
 
@@ -80,7 +80,7 @@ class AccountActivity : AppCompatActivity() {
                 R.layout.view_account_item, users
 
             ).apply {
-                setOnItemClickListener { adapter, view, position ->
+                setOnItemClickListener { _, _, position: Int ->
                     PreferenceManager.getDefaultSharedPreferences(this@AccountActivity).edit()
                         .putInt("usernum", position).apply()
                     this.notifyDataSetChanged()

@@ -74,6 +74,8 @@ import com.perol.asdpl.pixivez.responses.Tag
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
+import com.perol.asdpl.pixivez.sql.AppDatabase
+import com.perol.asdpl.pixivez.sql.SearchHistoryEntity
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 import com.perol.asdpl.pixivez.viewmodel.ProgressInfo
 import com.shehuan.niv.NiceImageView
@@ -202,6 +204,16 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
                 setOnTagClickListener { view, position, parent ->
                     val bundle = Bundle()
                     bundle.putString("searchword", s.tags[position].name)
+                    /* when clicked tag add it on the search history*/
+                    var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
+                    Observable.create<Int> {
+                        appDatabase.searchhistoryDao()
+                            .insert(SearchHistoryEntity(s.tags[position].name + "-" + s.tags[position].translated_name))
+                        it.onNext(1)
+                    }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnError {
+
+                    }.subscribe {
+                    }
                     val intent = Intent(context, SearchResultActivity::class.java)
                     intent.putExtras(bundle)
                     context.startActivity(intent)
@@ -471,7 +483,7 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
             }
             play!!.setOnClickListener {
                 play.visibility = View.GONE
-                Toasty.info(PxEZApp.instance, "Downloading...", Toast.LENGTH_SHORT).show()
+//                Toasty.info(PxEZApp.instance, "Downloading...", Toast.LENGTH_SHORT).show()
                 pictureXViewModel.loadgif(data.id).flatMap {
                     duration = it.ugoira_metadata.frames[0].delay
 
@@ -610,5 +622,9 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
     fun setProgressComplete(it: Boolean) {
         progressBar?.visibility = View.GONE
         createAnimationFrame(data, imageViewGif!!, duration)
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
     }
 }

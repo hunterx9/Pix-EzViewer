@@ -96,7 +96,7 @@ class ProgressActivityFragment : Fragment() {
                     val workinfo = data[position]
                     val max = data[position].progress.getLong("max", 100)
                     val now = data[position].progress.getLong("now", 0)
-                    val id = data[position].progress.getLong("id", 0)
+//                    val id = data[position].progress.getLong("id", 0)
                     val title1 = data[position].progress.getString("title")
                     holder.apply {
                         progress.max = max.toInt()
@@ -266,10 +266,10 @@ class ProgressActivityFragment : Fragment() {
         fab.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(activity)
             builder.setTitle("Clean all?")
-                .setPositiveButton(android.R.string.ok) { i, v ->
+                .setPositiveButton(android.R.string.ok) { _, _ ->
                     WorkManager.getInstance(PxEZApp.instance).pruneWork()
                 }
-                .setNegativeButton(android.R.string.cancel) { i, v ->
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
 
                 }
             val dialog = builder.create()

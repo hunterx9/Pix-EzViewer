@@ -39,6 +39,7 @@ import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 class PictureXViewModel : BaseViewModel() {
+    val newRec = arrayListOf<Illust>()
     val illustDetailResponse = MutableLiveData<IllustDetailResponse?>()
     val retrofitRespository: RetrofitRespository = RetrofitRespository.getInstance()
     val aboutPics = MutableLiveData<ArrayList<Illust>>()
@@ -157,6 +158,15 @@ class PictureXViewModel : BaseViewModel() {
         disposables.add(retrofitRespository.getIllustRecommended(long).subscribe({
 
             aboutPics.value = it.illusts as ArrayList<Illust>?
+            newRec.addAll(it.illusts as ArrayList<Illust>)
+            disposables.add(retrofitRespository.getIllustRecommendedNext(long,30).subscribe({ nextIt ->
+                newRec.addAll(nextIt.illusts as ArrayList<Illust>)
+                disposables.add(retrofitRespository.getIllustRecommendedNext(long,60).subscribe({ nextIt2 ->
+                    newRec.addAll(nextIt2.illusts as ArrayList<Illust>)
+                    aboutPics.value = newRec
+                }, {}, {}))
+
+            }, {}, {}))
         }, {}, {}))
     }
 

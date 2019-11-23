@@ -45,9 +45,9 @@ class PathProviderActivity : RinkActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.themeInit(this)
-        var a = 1
+
         nowPath = Environment.getExternalStorageDirectory().absolutePath
-        if (nowPath == null || nowPath.isBlank()) {
+        if (nowPath.isBlank()) {
             Toasty.error(this, resources.getString(R.string.noaccess)).show()
             finish()
             return
@@ -71,7 +71,7 @@ class PathProviderActivity : RinkActivity() {
         recyclerview.apply {
             layoutManager = LinearLayoutManager(this@PathProviderActivity)
             adapter = pathProviderAdapter.apply {
-                onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, view, position ->
+                onItemClickListener = BaseQuickAdapter.OnItemClickListener { adapter, _, position ->
                     nowPathLists = adapter.data as ArrayList<File>
                     nowPath = nowPathLists[position].path
                     pathProviderAdapter.setNewData(getPathList(nowPath))

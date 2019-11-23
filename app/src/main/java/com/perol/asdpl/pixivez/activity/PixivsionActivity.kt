@@ -134,7 +134,7 @@ class PixivsionActivity : RinkActivity() {
                                         }
                                     })
                         }, recyclerview_pixivision)
-                        pixiviSionAdapter.setOnItemChildClickListener { adapter, view, position ->
+                        pixiviSionAdapter.setOnItemChildClickListener { _, _, position ->
                             val intent = Intent(applicationContext, WebViewActivity::class.java)
                             intent.putExtra("url", data!!.spotlight_articles[position].article_url.replace("ja", if (PxEZApp.locale == "zh") {
                                 "zh"

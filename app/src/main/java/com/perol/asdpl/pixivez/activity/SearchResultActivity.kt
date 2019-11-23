@@ -44,7 +44,7 @@ import kotlinx.android.synthetic.main.content_search_result.*
 
 
 class SearchResultActivity : RinkActivity() {
-    lateinit var searchword: String;
+    lateinit var searchword: String
 
     lateinit var binding: ActivitySearchResultBinding
     var arrayList = ArrayList<Fragment>()
@@ -56,10 +56,11 @@ class SearchResultActivity : RinkActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        searchword = if (intent.extras != null) {
-            intent.extras!!.getString("searchword")!!
+        if (intent.extras != null) {
+            searchword = intent.extras!!.getString("searchword")!!
+//            searchword += " R-18"
         } else {
-            "1"
+            searchword =  "1"
         }
         initview()
 

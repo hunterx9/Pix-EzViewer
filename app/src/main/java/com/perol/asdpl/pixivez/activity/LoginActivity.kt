@@ -139,7 +139,7 @@ class LoginActivity : RinkActivity() {
                 )
                 normalDialog.setTitle("请务必读完")
                 normalDialog.setPositiveButton("我已知晓"
-                ) { dialog, which ->
+                ) { _, _ ->
                     sharedPreferencesServices!!.setBoolean("firstinfo", true)
                 }
                 normalDialog.show()
@@ -297,7 +297,7 @@ class LoginActivity : RinkActivity() {
         Works.checkUpdate(this)
     }
 
-    fun showHelp(view: View) {
+    fun showHelp() {
 //        val intent = Intent(this@LoginActivity, NewUserActivity::class.java)
 //        startActivity(intent)
         Toasty.info(this, this.resources.getString(R.string.registerclose), Toast.LENGTH_LONG).show()

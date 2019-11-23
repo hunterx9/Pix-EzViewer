@@ -132,8 +132,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="title_activity_illust_recom">IllustRecomActivity</string>
     <string name="title_activity_fling">FlingActivity</string>
-    <string name="copyright">
-    </string>
+    <string name="copyright">cpy</string>
     <string name="dali">Proxy Setting</string>
     <string name="checkupdate">Check</string>
     <string name="icon">icon</string>
@@ -205,7 +204,7 @@
     <string name="proxydetail">Disable direct link to Pixiv</string>
     <string name="encodinggif">Encoding ugoria</string>
     <string name="privatep">private</string>
-    <string name="fetchtags" >fetch tags....</string>
+    <string name="fetchtags">fetch tags....</string>
     <string name="publics">公开</string>
     <string name="privates">非公开</string>
     <string name="onlysupportinternalstorage">Only Support Internal Storage</string>
@@ -243,4 +242,29 @@
     <string name="dark_mode">Dark Mode</string>
     <string name="restart_now">Restart Now</string>
     <string name="account_management">Account MGT</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="login_failed">Login failed</string>
+    <string name="messages_header">Messages</string>
+    <string name="reply_title">Default reply action</string>
+    <string name="signature_title">Your signature</string>
+    <string name="sync_header">Sync</string>
+    <string name="sync_title">Sync email periodically</string>
+    <string name="title_activity_login_m">Sign in</string>
+    <string name="title_activity_path_provider">PathProviderActivity</string>
+    <string name="title_activity_progress">ProgressActivity</string>
+    <string name="title_activity_search_r">SearchRActivity</string>
+    <string name="title_activity_search_x">SearchXActivity</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_work">WorkActivity</string>
+    <string name="welcome">Welcome !</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
 </resources>
+

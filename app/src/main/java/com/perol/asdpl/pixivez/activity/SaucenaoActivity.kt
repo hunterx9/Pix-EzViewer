@@ -198,7 +198,7 @@ class SaucenaoActivity : RinkActivity() {
         val file = File(path)
         val builder = MultipartBody.Builder()
         builder.setType(MultipartBody.FORM)
-        val body = RequestBody.create("image/jpeg".toMediaTypeOrNull(), file)
+        val body = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
         builder.addFormDataPart("file", file.name, body)
         api.searchpicforresult(builder.build().part(0)).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({

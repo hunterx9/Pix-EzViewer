@@ -65,12 +65,12 @@ private const val ARG_PARAM1 = "param1"
  * create an instance of this fragment.
  *
  */
-class PictureXFragment : LazyV4Fragment() {
+class PictureXFragment : Fragment() {
 
     private var param1: Long? = null
     private var param2: Illust? = null
     private lateinit var pictureXViewModel: PictureXViewModel
-    override fun loadData() {
+    fun loadData() {
 //        val item = activity?.intent?.extras
 //        val illust = item?.getParcelable<Illust>(param1.toString())
         pictureXViewModel.firstGet(param1!!, param2)
@@ -92,6 +92,7 @@ class PictureXFragment : LazyV4Fragment() {
     private fun initViewModel() {
 
         pictureXViewModel = ViewModelProviders.of(this).get(PictureXViewModel::class.java)
+
         pictureXViewModel.startPostPone.observe(this, Observer {
             //            activity?.supportStartPostponedEnterTransition()
         })
@@ -217,7 +218,7 @@ class PictureXFragment : LazyV4Fragment() {
 //              no more anko
             }
         })
-
+        loadData()
     }
 
     var hasMoved = false
