@@ -82,7 +82,11 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
                     }
                 }
                 if (reRequest) {
-                    Toast.makeText(this, "未获得授权，请自行到系统设置进行授权", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Not authorized, please go to the system settings to authorize",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
             else -> {
@@ -278,9 +282,9 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
 
     private fun clean() {
         val normalDialog = MaterialAlertDialogBuilder(this)
-        normalDialog.setMessage("这将清理全部的缓存")
+        normalDialog.setMessage("Do you want to clear all your cache?")
         normalDialog.setPositiveButton(
-            "确定"
+            "Yes"
         ) { _, _ ->
             Thread(Runnable {
                 GlideApp.get(applicationContext).clearDiskCache()

@@ -72,7 +72,9 @@ class ThemeActivity : AppCompatActivity() {
                 ColorData(ContextCompat.getColor(this, R.color.md_green_300), "Green"),
                 ColorData(ContextCompat.getColor(this, R.color.md_indigo_300), "Indigo"),
                 ColorData(ContextCompat.getColor(this, R.color.md_red_500), "Red"),
-                ColorData(ContextCompat.getColor(this, R.color.now), "Pale green"))
+            ColorData(ContextCompat.getColor(this, R.color.now), "Pale green"),
+            ColorData(ContextCompat.getColor(this, R.color.black_overlay), "Grey")
+        )
         recyclerview.apply {
             layoutManager = LinearLayoutManager(this@ThemeActivity)
             adapter = ColorfulAdapter(R.layout.view_colorfulitem, list).apply {

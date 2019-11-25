@@ -56,6 +56,12 @@ class UserMillustViewModel : ViewModel() {
         retrofit.getUserIllusts(id, type).subscribe({
             data.value = it.illusts
             nexturl.value = it.next_url
+            if (nexturl.value != null) {
+                retrofit.getNextUserIllusts(nexturl.value!!).subscribe({
+                    adddata.value = it.illusts
+                    nexturl.value = it.next_url
+                }, {}, {})
+            }
         }, {}, {})
     }
 

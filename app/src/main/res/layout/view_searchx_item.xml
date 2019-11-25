@@ -7,7 +7,7 @@
     android:orientation="horizontal">
 
     <TextView
-        android:text="千夜sqwdw"
+        android:text="Search history"
         android:id="@+id/textview_searchx_history"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

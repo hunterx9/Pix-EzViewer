@@ -40,7 +40,8 @@ class ThemeUtil {
                 R.style.AppThemeBase_green,
                 R.style.AppThemeBase_indigo,
                 R.style.AppThemeBase_red,
-                R.style.AppThemeBase_now
+            R.style.AppThemeBase_now,
+            R.style.AppThemeBase_black
         )
 
         @JvmStatic

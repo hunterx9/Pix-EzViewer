@@ -50,15 +50,15 @@
         <item>reply_all</item>
     </string-array>
     <string-array name="modellist" >
-          <item>每日</item>
-          <item>男性</item>
-          <item>女性</item>
-          <item>原創</item>
-          <item>新人</item>
-          <item>每周</item>
-          <item>每月</item>
-          <item>XVIII</item>
-          <item>XVIII_Week</item>
+        <item>XVIII</item>
+        <item>XVIII_Week</item>
+        <item>每日</item>
+        <item>男性</item>
+        <item>女性</item>
+        <item>原創</item>
+        <item>新人</item>
+        <item>每周</item>
+        <item>每月</item>
     </string-array>
     <string-array name="dark_mode">
         <item>跟隨系統</item>

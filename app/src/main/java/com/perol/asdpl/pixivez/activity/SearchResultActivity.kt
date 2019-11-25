@@ -32,12 +32,14 @@ import android.view.MenuItem
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.SearchResultAdapter
 import com.perol.asdpl.pixivez.databinding.ActivitySearchResultBinding
 import com.perol.asdpl.pixivez.fragments.IllustFragment
 import com.perol.asdpl.pixivez.fragments.UserFragment
+import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import kotlinx.android.synthetic.main.activity_search_result.*
 import kotlinx.android.synthetic.main.content_search_result.*
@@ -45,6 +47,7 @@ import kotlinx.android.synthetic.main.content_search_result.*
 
 class SearchResultActivity : RinkActivity() {
     lateinit var searchword: String
+    private var sharedPreferencesServices: SharedPreferencesServices? = null
 
     lateinit var binding: ActivitySearchResultBinding
     var arrayList = ArrayList<Fragment>()
@@ -56,9 +59,19 @@ class SearchResultActivity : RinkActivity() {
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
+
         if (intent.extras != null) {
             searchword = intent.extras!!.getString("searchword")!!
-//            searchword += " R-18"
+            try {
+
+                val isR18all =
+                    PreferenceManager.getDefaultSharedPreferences(this).getBoolean("r18all", false)
+                if (isR18all) searchword += " R-18"
+
+            } catch (e: Exception) {
+
+            }
+
         } else {
             searchword =  "1"
         }

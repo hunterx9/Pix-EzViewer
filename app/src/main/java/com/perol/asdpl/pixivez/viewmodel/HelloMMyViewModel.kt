@@ -41,6 +41,19 @@ class HelloMMyViewModel : ViewModel() {
             nexturl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?
         }, {}, {})
+        retrofitRespository.getNext(nexturl.value!!).subscribe({
+            nexturl.value = it.next_url
+            addillusts.value = it.illusts as ArrayList<Illust>?
+            if (nexturl.value != null) {
+                retrofitRespository.getNext(nexturl.value!!).subscribe({
+                    val lists = ArrayList<Illust>(it.illusts)
+                    val listss = addillusts.value
+                    listss!!.addAll(lists)
+                    addillusts.value = listss
+                    nexturl.value = it.next_url
+                }, {}, {})
+            }
+        }, {}, {})
     }
 
     fun onLoadMoreRequested() {

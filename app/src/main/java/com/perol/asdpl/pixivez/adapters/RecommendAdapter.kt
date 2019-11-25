@@ -37,6 +37,7 @@ import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.target.ImageViewTarget
 import com.bumptech.glide.request.transition.Transition
@@ -165,6 +166,7 @@ class RecommendAdapter(layoutResId: Int, data: List<Illust>?, private val R18on:
             } else {
                 GlideApp.with(imageView.context).load(loadurl)
                     .transition(withCrossFade()).placeholder(R.color.white)
+                    .diskCacheStrategy(DiskCacheStrategy.DATA)
                     .into(object : ImageViewTarget<Drawable>(imageView) {
 
                         override fun onResourceReady(
@@ -191,6 +193,7 @@ class RecommendAdapter(layoutResId: Int, data: List<Illust>?, private val R18on:
 
             GlideApp.with(imageView.context).load(loadurl).transition(withCrossFade())
                 .placeholder(R.color.white)
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .error(ContextCompat.getDrawable(imageView.context, R.drawable.ai))
                 .into(object : ImageViewTarget<Drawable>(imageView) {
                     override fun setResource(resource: Drawable?) {

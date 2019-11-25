@@ -198,7 +198,8 @@ class CommentDialog : DialogFragment() {
                                     override fun onNext(illustCommentsResponse: IllustCommentsResponse) {
 
                                         commentAdapter!!.setNewData(illustCommentsResponse.comments)
-                                        Toast.makeText(context, "评论成功！", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Comment sent！", Toast.LENGTH_SHORT)
+                                            .show()
                                         edittextComment.setText("")
                                         Parent_comment_id = 1
                                         edittextComment.hint = ""

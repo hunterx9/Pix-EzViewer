@@ -103,7 +103,7 @@
                                 android:textIsSelectable="true"
                                 android:focusable="true"
                                 android:longClickable="true"
-                                android:text="少女前线"
+                                android:text="Illust Description"
                                 app:layout_constraintEnd_toStartOf="@+id/imagebutton_gif"
                                 app:layout_constraintStart_toEndOf="@+id/pic_image"
                                 app:layout_constraintTop_toBottomOf="@+id/pic_user" />
@@ -113,7 +113,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="18dp"
                                 android:layout_marginStart="8dp"
-                                android:text="少女前线"
+                                android:text="Illust title"
                                 android:enabled="true"
                                 android:textIsSelectable="true"
                                 android:focusable="true"
@@ -129,7 +129,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="8dp"
                                 android:layout_marginStart="8dp"
-                                android:textSize="10dp"
+                                android:textSize="10sp"
 
                                 app:layout_constraintStart_toEndOf="@+id/pic_image"
                                 app:layout_constraintTop_toBottomOf="@+id/pic_detail" />
@@ -176,7 +176,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="8dp"
                                     android:layout_marginTop="8dp"
-                                    android:text="插画ID"
+                                    android:text="@string/illust_id"
                                     app:layout_constraintStart_toEndOf="@+id/textView_pix"
                                     app:layout_constraintTop_toTopOf="parent" />
                                 <TextView
@@ -205,7 +205,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="8dp"
                                     android:layout_marginTop="8dp"
-                                    android:text="查看"
+                                    android:text="@string/view_count"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
@@ -224,7 +224,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="8dp"
-                                    android:text="收藏"
+                                    android:text="@string/userdetail_liked"
                                     app:layout_constraintStart_toEndOf="@+id/textView10"
                                     app:layout_constraintTop_toTopOf="@+id/textView12" />
                                 <TextView
@@ -233,7 +233,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="8dp"
                                     android:layout_marginTop="8dp"
-                                    android:text="分辨率"
+                                    android:text="@string/resolution"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toTopOf="parent" />
                             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -278,7 +278,7 @@
                                 android:layout_alignParentBottom="true"
                                 android:layout_centerHorizontal="true"
                                 android:layout_gravity="center_horizontal"
-                                android:text="查看评论" />
+                                android:text="@string/viewcomment" />
                         </RelativeLayout>
                     </LinearLayout>
 

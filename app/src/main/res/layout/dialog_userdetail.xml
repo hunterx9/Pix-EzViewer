@@ -34,25 +34,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="关注用户" />
+        android:text="@string/view_count" />
     <TextView
         android:id="@+id/textview_guanzhuzhe"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:text="363"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textColor="@color/colorPrimaryDark"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="好P友" />
+        android:text="@string/userdetail_liked" />
     <TextView
         android:id="@+id/textview_haoPyou"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:text="363"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textColor="@color/colorPrimaryDark"/>
 </LinearLayout>
 
@@ -63,7 +63,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:text="关注者" />
+        android:text="@string/user_detail_followers" />
 
     <TextView
         android:id="@+id/textview_hold"
@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:text="363"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 </LinearLayout>
     </LinearLayout>
 

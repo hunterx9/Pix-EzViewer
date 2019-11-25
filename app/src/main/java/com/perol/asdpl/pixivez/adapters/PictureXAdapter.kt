@@ -25,14 +25,17 @@
 package com.perol.asdpl.pixivez.adapters
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ResolveInfo
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.text.util.Linkify
@@ -67,6 +70,7 @@ import com.perol.asdpl.pixivez.activity.SearchResultActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.activity.ZoomActivity
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
+import com.perol.asdpl.pixivez.networks.SharedPreferencesServices
 import com.perol.asdpl.pixivez.objects.TToast
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.responses.Illust
@@ -112,6 +116,7 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
     }
 
     init {
+
         when (PreferenceManager.getDefaultSharedPreferences(mContext).getString("quality", "0")?.toInt()
                 ?: 0) {
             0 -> {
@@ -147,10 +152,12 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
     }
 
     class DetailViewHolder(var binding: ViewPicturexDetailBinding) : RecyclerView.ViewHolder(binding.root) {
+        private var sharedPreferencesServices: SharedPreferencesServices? = null
         private val tagFlowLayout = itemView.findViewById<TagFlowLayout>(R.id.tagflowlayout)
         private val captionTextView = itemView.findViewById<TextView>(R.id.textview_caption)
         private val viewCommentTextView = itemView.findViewById<TextView>(R.id.textview_viewcomment)
         private val imageView = itemView.findViewById<NiceImageView>(R.id.imageView5)
+        private val btnTranslate = itemView.findViewById<TextView>(R.id.btn_translate)
         private val imageButtonDownload = itemView.findViewById<ImageButton>(R.id.imagebutton_download)
         fun updateWithPage(mContext: Context, s: Illust, mViewCommentListen: () -> Unit, mUserPicLongClick: () -> Unit) {
             binding.illust = s
@@ -175,6 +182,37 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
                 intent.putExtra("data", s.user.id)
                 mContext.startActivity(intent)
             }
+            btnTranslate.setOnClickListener {
+                val intent = Intent()
+                    .setType("text/plain")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    intent.setAction(Intent.ACTION_PROCESS_TEXT)
+                    intent.putExtra(Intent.EXTRA_PROCESS_TEXT, s.caption)
+                } else {
+                    intent.setAction(Intent.ACTION_SEND)
+                    intent.putExtra(Intent.EXTRA_TEXT, s.caption)
+                }
+
+                for (resolveInfo: ResolveInfo in mContext.getPackageManager().queryIntentActivities(
+                    intent,
+                    0
+                )) {
+                    if (resolveInfo.activityInfo.packageName.contains("com.google.android.apps.translate")) {
+                        intent.component = ComponentName(
+                            resolveInfo.activityInfo.packageName,
+                            resolveInfo.activityInfo.name
+                        )
+                        mContext.startActivity(intent)
+                    }
+
+                }
+//                intent.component = ComponentName(
+//                    "com.google.android.apps.translate",
+//                    "com.google.android.apps.translate.TranslateActivity"
+//                )
+//
+//                mContext.startActivity(intent)
+            }
             if (s.caption.isNotBlank())
                 binding.html = Html.fromHtml(s.caption)
             else
@@ -182,6 +220,7 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
             viewCommentTextView.setOnClickListener {
                 mViewCommentListen.invoke()
             }
+
             tagFlowLayout.apply {
 
                 adapter = object : TagAdapter<Tag>(s.tags) {
@@ -203,12 +242,21 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
                 }
                 setOnTagClickListener { view, position, parent ->
                     val bundle = Bundle()
+
                     bundle.putString("searchword", s.tags[position].name)
+//                    bundle.putString("searchword", s.tags[position].name+ " R-18")
                     /* when clicked tag add it on the search history*/
                     var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
                     Observable.create<Int> {
-                        appDatabase.searchhistoryDao()
-                            .insert(SearchHistoryEntity(s.tags[position].name + "-" + s.tags[position].translated_name))
+                        val sTag = s.tags[position]
+                        if (sTag.translated_name != null)
+                            appDatabase.searchhistoryDao()
+                                .insert(SearchHistoryEntity(sTag.name + "-" + sTag.translated_name))
+                        else {
+                            appDatabase.searchhistoryDao()
+                                .insert(SearchHistoryEntity(sTag.name))
+
+                        }
                         it.onNext(1)
                     }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).doOnError {
 
@@ -325,7 +373,7 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
                     val builder = MaterialAlertDialogBuilder(mContext as Activity)
 
                     builder.setTitle(mContext.resources.getString(R.string.saveselectpic1))
-                    builder.setMessage("描述: " + Html.fromHtml(data.caption))
+                    builder.setMessage("Description: " + Html.fromHtml(data.caption))
                     builder.setPositiveButton(mContext.resources.getString(R.string.confirm)) { dialog, which ->
                         TToast.startDownload(PxEZApp.instance)
                         Works.imageDownloadOne(data, position)

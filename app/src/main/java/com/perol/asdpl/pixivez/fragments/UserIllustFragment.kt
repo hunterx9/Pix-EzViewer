@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.RecommendAdapter
 import com.perol.asdpl.pixivez.objects.LazyV4Fragment
+import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.viewmodel.UserMillustViewModel
 import kotlinx.android.synthetic.main.fragment_user_illust.*
 
@@ -52,6 +53,7 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class UserIllustFragment : LazyV4Fragment() {
+
     override fun loadData() {
         viewmodel!!.first(param1!!, param2!!)
     }
@@ -78,6 +80,7 @@ class UserIllustFragment : LazyV4Fragment() {
             param2 = it.getString(ARG_PARAM2)
         }
         initvoid()
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,18 +102,78 @@ class UserIllustFragment : LazyV4Fragment() {
         viewmodel!!.data.observe(this, Observer {
             if (it != null) {
                 mrefreshlayout.isRefreshing = false
-                recommendAdapter.setNewData(it)
+                recommendAdapter.setNewData(filterIllust(it))
             }
 
         })
         viewmodel!!.adddata.observe(this, Observer {
             if (it != null) {
-                recommendAdapter.addData(it)
+
+
+                recommendAdapter.addData(filterIllust(it))
                 recommendAdapter.loadMoreComplete()
             }
         })
 
 
+    }
+
+    private fun filterIllust(it: List<Illust>): List<Illust> {
+        var filteredIllusts = listOf<Illust>()
+        try {
+
+            val isR18all =
+                PreferenceManager.getDefaultSharedPreferences(context).getBoolean("r18all", false)
+            val isR18no =
+                PreferenceManager.getDefaultSharedPreferences(context).getBoolean("r18no", false)
+            if (isR18all) {
+                filteredIllusts = it
+                    .filter { it.tags.all { tag -> tag.name != "shota" } }
+                    .filter { it.tags.all { tag -> tag.name != "yaoi" } }
+                    .filter { it.tags.all { tag -> tag.name != "BL" } }
+                    .filter { it.tags.all { tag -> tag.name != "腐向け" } }
+                    .filter { it.tags.all { tag -> tag.name != "やおい" } }
+                    .filter { it.tags.all { tag -> tag.name != "腐" } }
+                    .filter { it.tags.all { tag -> tag.name != "ホモ" } }
+                    .filter { it.tags.all { tag -> tag.name != "ふたなり" } }
+                    .filter { it.tags.all { tag -> tag.name != "futanari" } }
+                    .filter { it.tags.all { tag -> tag.name != "gay" } }
+                    .filter { it.tags.all { tag -> tag.name != "ゲイ" } }
+                    .filter { it.tags.all { tag -> tag.name != "ケモノ" } }
+                    .filter { it.tags.all { tag -> tag.name != "獸人" } }
+                    .filter { it.tags.all { tag -> tag.name != "furry" } }
+                    .filter { it.tags.all { tag -> !tag.name.contains("【腐】") } }
+                    .filter { it.tags.get(0).name.equals("R-18") }
+            } else if (isR18no) {
+                filteredIllusts = it
+                    .filter { it.tags.all { tag -> tag.name != "shota" } }
+                    .filter { it.tags.all { tag -> tag.name != "yaoi" } }
+                    .filter { it.tags.all { tag -> tag.name != "BL" } }
+                    .filter { it.tags.all { tag -> tag.name != "腐向け" } }
+                    .filter { it.tags.all { tag -> tag.name != "やおい" } }
+                    .filter { it.tags.all { tag -> tag.name != "腐" } }
+                    .filter { it.tags.all { tag -> tag.name != "ホモ" } }
+                    .filter { it.tags.all { tag -> tag.name != "ふたなり" } }
+                    .filter { it.tags.all { tag -> tag.name != "futanari" } }
+                    .filter { it.tags.all { tag -> tag.name != "gay" } }
+                    .filter { it.tags.all { tag -> tag.name != "ゲイ" } }
+                    .filter { it.tags.all { tag -> tag.name != "ケモノ" } }
+                    .filter { it.tags.all { tag -> tag.name != "獸人" } }
+                    .filter { it.tags.all { tag -> tag.name != "furry" } }
+                    .filter { it.tags.all { tag -> !tag.name.contains("【腐】") } }
+                    .filter { !it.tags.get(0).name.equals("R-18") }
+            } else {
+                filteredIllusts = it
+            }
+
+        } catch (e: Exception) {
+
+        }
+
+
+//        val illust = arrayListOf<Illust>()
+//        illust.addAll(filteredIllusts)
+        return filteredIllusts
     }
 
 

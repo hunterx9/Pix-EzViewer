@@ -43,6 +43,19 @@
             app:key="r18on"
             app:summaryOff="H是不行的！ (￣^￣) "
             app:title="@string/_18" />
+
+        <SwitchPreference
+            android:summaryOn="R-18 on every search and user profile search too"
+            app:defaultValue="false"
+            app:key="r18all"
+            app:summaryOff="Normal on every search and user profile search too"
+            app:title="@string/_18all" />
+        <SwitchPreference
+            android:summaryOn="Safe mode on every search and user profile search too"
+            app:defaultValue="false"
+            app:key="r18no"
+            app:summaryOff="Normal mode"
+            app:title="@string/_18no" />
         <SwitchPreference
             app:key="disableproxy"
             app:title="@string/proxy" />

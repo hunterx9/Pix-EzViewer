@@ -96,5 +96,12 @@
         <item name="colorAccent">@color/nowDark</item>
     </style>
 
+    <style name="AppThemeBase.black">
+        <item name="colorPrimary">@color/gray_light</item>
+        <item name="colorPrimaryDark">@color/md_indigo_500</item>
+        <item name="colorAccent">@color/nowDark</item>
+
+    </style>
+
 
 </resources>

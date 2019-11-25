@@ -43,6 +43,11 @@ class HelloMRecomModel : BaseViewModel() {
             retrofitRespository.getPixivison("all").subscribe({
                 articles.value = it
             }, {}, {})
+
+            retrofitRespository.getNext(nexturl.value!!).subscribe({
+                nexturl.value = it.next_url
+                addillusts.value = it.illusts as ArrayList<Illust>?
+            }, {}, {}).add()
         }, {
 
         }, {}).add()
@@ -53,6 +58,15 @@ class HelloMRecomModel : BaseViewModel() {
         retrofitRespository.getNext(nexturl.value!!).subscribe({
             nexturl.value = it.next_url
             addillusts.value = it.illusts as ArrayList<Illust>?
+            if (nexturl.value != null) {
+                retrofitRespository.getNext(nexturl.value!!).subscribe({
+                    val lists = ArrayList<Illust>(it.illusts)
+                    val listss = addillusts.value
+                    listss!!.addAll(lists)
+                    addillusts.value = listss
+                    nexturl.value = it.next_url
+                }, {}, {}).add()
+            }
         }, {}, {}).add()
     }
 

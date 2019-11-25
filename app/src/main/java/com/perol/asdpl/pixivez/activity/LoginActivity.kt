@@ -287,7 +287,8 @@ class LoginActivity : RinkActivity() {
 //                            loginBtn.isClickable = true
 //                            loginBtn.isEnabled = true // Avoid double logins.
 
-                            Toast.makeText(applicationContext, "登录成功", Toast.LENGTH_LONG).show()
+                            Toast.makeText(applicationContext, "Login success", Toast.LENGTH_LONG)
+                                .show()
                             val intent = Intent(this@LoginActivity, HelloMActivity::class.java)
                             startActivity(intent)
                             finish()

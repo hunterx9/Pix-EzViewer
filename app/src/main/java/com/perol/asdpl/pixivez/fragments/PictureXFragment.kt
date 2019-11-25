@@ -32,7 +32,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Switch
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -46,8 +45,6 @@ import com.perol.asdpl.pixivez.adapters.PictureXAdapter
 import com.perol.asdpl.pixivez.adapters.TagsAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import com.perol.asdpl.pixivez.dialog.CommentDialog
-import com.perol.asdpl.pixivez.objects.LazyV4Fragment
-import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
@@ -69,6 +66,7 @@ class PictureXFragment : Fragment() {
 
     private var param1: Long? = null
     private var param2: Illust? = null
+    private var param3: Boolean = false
     private lateinit var pictureXViewModel: PictureXViewModel
     fun loadData() {
 //        val item = activity?.intent?.extras
@@ -91,6 +89,9 @@ class PictureXFragment : Fragment() {
     private var pictureXAdapter: PictureXAdapter? = null
     private fun initViewModel() {
 
+//        if (param3){
+//
+//        }else{
         pictureXViewModel = ViewModelProviders.of(this).get(PictureXViewModel::class.java)
 
         pictureXViewModel.startPostPone.observe(this, Observer {
@@ -219,6 +220,8 @@ class PictureXFragment : Fragment() {
             }
         })
         loadData()
+//        }
+
     }
 
     var hasMoved = false
@@ -227,8 +230,8 @@ class PictureXFragment : Fragment() {
             pictureXViewModel.FabClick()
         }
         fab.setOnLongClickListener {
-            Toasty.info(activity!!, resources.getString(R.string.fetchtags), Toast.LENGTH_SHORT)
-                .show()
+            //            Toasty.info(activity!!, resources.getString(R.string.fetchtags), Toast.LENGTH_SHORT)
+//                .show()
             pictureXViewModel.fabOnLongClick()
             true
         }
@@ -261,6 +264,7 @@ class PictureXFragment : Fragment() {
         arguments?.let {
             param1 = it.getLong(ARG_PARAM1)
             param2 = it.getParcelable("illust")
+            param3 = it.getBoolean("history")
         }
         initViewModel()
     }
@@ -297,11 +301,12 @@ class PictureXFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: Long, illust: Illust?) =
+        fun newInstance(param1: Long, illust: Illust?, isHistory: Boolean) =
             PictureXFragment().apply {
                 arguments = Bundle().apply {
                     putLong(ARG_PARAM1, param1)
                     putParcelable("illust", illust)
+                    putBoolean("history", isHistory)
                 }
             }
     }

@@ -12,6 +12,6 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_download"
-        android:title="Σ( ° △ °|||)︴"
+        android:title="Download"
         app:showAsAction="collapseActionView" />
 </menu>

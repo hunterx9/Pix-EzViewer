@@ -80,7 +80,11 @@ class ReFreshFunction : io.reactivex.functions.Function<Observable<Throwable>, O
                 } else if (throwable.response()!!.code() == 404) {
                     if (i == 0) {
                         Log.d("d", throwable.response()!!.message())
-                        Toasty.warning(PxEZApp.instance, "查找的id不存在" + throwable.response()!!.message(), Toast.LENGTH_SHORT).show()
+                        Toasty.warning(
+                            PxEZApp.instance,
+                            "Id not found" + throwable.response()!!.message(),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         i++
                     }
                     return@Function Observable.error<Any>(throwable)

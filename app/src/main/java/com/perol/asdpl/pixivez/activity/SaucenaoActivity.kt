@@ -53,7 +53,6 @@ import okhttp3.Dns
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.jsoup.Jsoup
@@ -138,7 +137,7 @@ class SaucenaoActivity : RinkActivity() {
                             out.flush()
                             out.close()
                         }
-                        Toasty.success(this, "解析成功正在上传", Toast.LENGTH_SHORT).show()
+                        Toasty.success(this, "Uploading success", Toast.LENGTH_SHORT).show()
                         val builder = MultipartBody.Builder()
                         builder.setType(MultipartBody.FORM)
 //                        val baos = ByteArrayOutputStream();
@@ -177,7 +176,8 @@ class SaucenaoActivity : RinkActivity() {
                                     tryToParseHtml(it.string())
                                 },
                                 {
-                                    Toasty.error(PxEZApp.instance, "服务器或本地发生错误" + it.message).show()
+                                    Toasty.error(PxEZApp.instance, "Server error" + it.message)
+                                        .show()
                                     if (file.exists()) {
                                         file.delete()
                                     }
@@ -194,7 +194,7 @@ class SaucenaoActivity : RinkActivity() {
 
     lateinit var api: SaucenaoService
     fun trytosearch(path: String) {
-        Toasty.success(this, "解析成功正在上传", Toast.LENGTH_SHORT).show()
+        Toasty.success(this, "Uploading...Please wait...", Toast.LENGTH_SHORT).show()
         val file = File(path)
         val builder = MultipartBody.Builder()
         builder.setType(MultipartBody.FORM)
@@ -202,9 +202,10 @@ class SaucenaoActivity : RinkActivity() {
         builder.addFormDataPart("file", file.name, body)
         api.searchpicforresult(builder.build().part(0)).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                Toasty.success(this, "上传成功，正在进行匹配", Toast.LENGTH_SHORT).show()
+                Toasty.success(this, "Uploading success, searching for a match", Toast.LENGTH_SHORT)
+                    .show()
                 tryToParseHtml(it.string())
-            }, { Toasty.error(this, "服务器或本地发生错误" + it.message).show() }, {
+            }, { Toasty.error(this, "Server error" + it.message).show() }, {
             })
     }
 

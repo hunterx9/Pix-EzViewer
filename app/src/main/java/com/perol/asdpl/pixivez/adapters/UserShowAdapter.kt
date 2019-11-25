@@ -57,6 +57,12 @@ class UserShowAdapter(layoutResId: Int) : BaseQuickAdapter<SearchUserResponse.Us
         val recyclerView = helper.getView<RecyclerView>(R.id.recyclerview_usershow)
         recyclerView.layoutManager = linearLayoutManager
         recyclerView.adapter = userSearchillustAdapter
+        userSearchillustAdapter.setOnItemClickListener { adapter, view, position ->
+            val intent = Intent(mContext, UserMActivity::class.java)
+            intent.putExtra("data", this.data[helper.adapterPosition].user.id)
+            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+            mContext.startActivity(intent)
+        }
         val name = item.user.name
         helper.setText(R.id.textview_usershowname, name)
         val imageView = helper.getView<ImageView>(R.id.imageview_usershow)

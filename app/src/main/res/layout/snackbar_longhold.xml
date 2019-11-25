@@ -60,7 +60,7 @@
               android:layout_height="wrap_content"
               android:layout_marginStart="8dp"
               android:layout_marginTop="8dp"
-              android:text="浏览"
+              android:text="@string/browse"
               app:layout_constraintStart_toEndOf="@+id/imageView3"
               app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
@@ -70,7 +70,7 @@
               android:layout_height="wrap_content"
               android:layout_marginStart="8dp"
               android:layout_marginTop="8dp"
-              android:text="收藏"
+              android:text="@string/collection"
               app:layout_constraintStart_toEndOf="@+id/textView18"
               app:layout_constraintTop_toBottomOf="@+id/textView15" />
 

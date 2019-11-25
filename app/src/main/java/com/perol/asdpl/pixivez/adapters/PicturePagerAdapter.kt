@@ -39,7 +39,8 @@ class PicturePagerAdapter(
     fm: FragmentManager,
     private val fragments: LongArray,
     val illust: Illust?,
-    val nowpostion: Int
+    val nowpostion: Int,
+    val isHistory: Boolean
 ) : FragmentStatePagerAdapter(fm, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItemPosition(`object`: Any): Int {
@@ -50,7 +51,7 @@ class PicturePagerAdapter(
         return PictureXFragment.newInstance(
             fragments[position], if (position == nowpostion) {
                 illust
-            } else null
+            } else null, isHistory
         )
     }
 

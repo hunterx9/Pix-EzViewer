@@ -45,11 +45,21 @@ class IllustratorViewModel : ViewModel() {
             retrofitRespository.getUserFollowing(long, restrict).subscribe({
                 userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
                 nexturl.value = it.next_url
+                retrofitRespository.getNextUser(it.next_url).subscribe({
+                    adduserpreviews.value =
+                        it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
+                    nexturl.value = it.next_url
+                }, {}, {})
             }, {}, {})
         } else {
             retrofitRespository.getUserFollower(long).subscribe({
                 userpreviews.value = it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
                 nexturl.value = it.next_url
+                retrofitRespository.getNextUser(it.next_url).subscribe({
+                    adduserpreviews.value =
+                        it.user_previews as ArrayList<SearchUserResponse.UserPreviewsBean>?
+                    nexturl.value = it.next_url
+                }, {}, {})
             }, {}, {})
         }
     }

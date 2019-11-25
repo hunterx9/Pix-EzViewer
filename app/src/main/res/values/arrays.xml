@@ -65,6 +65,8 @@
         <item>reply_all</item>
     </string-array>
     <string-array name="modellist" >
+        <item>XVIII</item>
+        <item>XVIII_Week</item>
           <item>每日</item>
           <item>男性</item>
           <item>女性</item>
@@ -72,8 +74,7 @@
           <item>新人</item>
           <item>每周</item>
           <item>每月</item>
-          <item>XVIII</item>
-          <item>XVIII_Week</item>
+
     </string-array>
     <string-array name="language" >
         <item>zh</item>

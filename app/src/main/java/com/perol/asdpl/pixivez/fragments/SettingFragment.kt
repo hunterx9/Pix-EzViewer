@@ -143,6 +143,16 @@ class SettingFragment : PreferenceFragmentCompat(), IconDialog.Callback {
             Toasty.normal(PxEZApp.instance, getString(R.string.needtorestart), Toast.LENGTH_SHORT).show()
             true
         }
+        findPreference<SwitchPreference>("r18all")!!.setOnPreferenceChangeListener { preference, newValue ->
+            Toasty.normal(PxEZApp.instance, getString(R.string.needtorestart), Toast.LENGTH_SHORT)
+                .show()
+            true
+        }
+        findPreference<SwitchPreference>("r18no")!!.setOnPreferenceChangeListener { preference, newValue ->
+            Toasty.normal(PxEZApp.instance, getString(R.string.needtorestart), Toast.LENGTH_SHORT)
+                .show()
+            true
+        }
         findPreference<SwitchPreference>("animation")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.animationEnable = newValue as Boolean
             true
@@ -265,7 +275,11 @@ class SettingFragment : PreferenceFragmentCompat(), IconDialog.Callback {
                     string += cr.readText()
                 }
                 val dialogBuild = MaterialAlertDialogBuilder(activity!!)
-                dialogBuild.setMessage(string).setTitle("这是崩溃报告，如果遇到个别功能闪退，请将此报告反馈给开发者")
+                dialogBuild.setMessage(string).setTitle(
+                    "This is a crash report. " +
+                            "If you encounter an individual feature flashback, " +
+                            "please report this report to the developer."
+                )
                         .setPositiveButton(android.R.string.ok) { _, _ ->
 
                         }

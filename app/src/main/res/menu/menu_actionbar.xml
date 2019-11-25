@@ -5,26 +5,26 @@
     <item
         android:id="@+id/action_homepage"
         android:icon="@mipmap/ic_my"
-        android:title="me"
+        android:title="My account"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_new"
         android:icon="@mipmap/ic_mynew"
-        android:title="new"
+        android:title="New"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_register"
-        android:title="完善帐号信息"
+        android:title="@string/update_account_information"
         app:showAsAction="never"
         android:visible="false"/>
     <item
     android:id="@+id/action_about"
-    android:title="设置"
+        android:title="@string/setting"
     app:showAsAction="never" />
 <item android:id="@+id/action_clearn"
-    android:title="清理"
+    android:title="@string/clean_up"
     app:showAsAction="never"
  />
     <item

@@ -160,13 +160,15 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             public void run() {
                 Looper.prepare();
                 if (ex instanceof Resources.NotFoundException) {
-                    Toast toast = Toast.makeText(mContext, "你使用的是二次打包的应用,请清除数据,前往google play或者设置中的项目地址进行安装更新:\r\n" + ex.getMessage(),
+                    Toast toast = Toast.makeText(mContext, "You are using a second packaged application" +
+                                    ", please clear the data, go to the google play or " +
+                                    "set the project address to install the update::\r\n" + ex.getMessage(),
                             Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                 } else if (DEBUG) {
-                    Log.d(TAG, "异常信息->" + msg);
-                    Toast toast = Toast.makeText(mContext, "程序出错，即将退出:\r\n" + ex.getMessage(),
+                    Log.d(TAG, "Exception msg->" + msg);
+                    Toast toast = Toast.makeText(mContext, "App error:\r\n" + ex.getMessage(),
                             Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();

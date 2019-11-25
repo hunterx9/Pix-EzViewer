@@ -56,6 +56,12 @@ class IllustfragmentViewModel : BaseViewModel() {
                     illusts.value = ArrayList<Illust>(it.illusts)
                     nexturl.value = it.next_url
                     isRefresh.value = false
+                    if (nexturl.value != null) {
+                        retrofitRespository.getNext(nexturl.value!!).subscribe({
+                            addIllusts.value = ArrayList<Illust>(it.illusts)
+                            nexturl.value = it.next_url
+                        }, {}, {}).add()
+                    }
                 }, {
                     it.printStackTrace()
                 }, {}).add()
@@ -66,6 +72,16 @@ class IllustfragmentViewModel : BaseViewModel() {
             retrofitRespository.getNext(nexturl.value!!).subscribe({
                 addIllusts.value = ArrayList<Illust>(it.illusts)
                 nexturl.value = it.next_url
+
+                if (nexturl.value != null) {
+                    retrofitRespository.getNext(nexturl.value!!).subscribe({
+                        val lists = ArrayList<Illust>(it.illusts)
+                        val listss = addIllusts.value
+                        listss!!.addAll(lists)
+                        addIllusts.value = listss
+                        nexturl.value = it.next_url
+                    }, {}, {}).add()
+                }
             }, {}, {}).add()
         }
 

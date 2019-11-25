@@ -77,7 +77,7 @@ class SearchRActivity : RinkActivity(), SearchRActivityFragment.OnFragmentIntera
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && data != null) {
-            val word = data.getStringExtra("word")
+            var word = data.getStringExtra("word")
 //            word += " R-18"
             searchview_searchm.setQuery(word, false)
         }
@@ -129,9 +129,8 @@ class SearchRActivity : RinkActivity(), SearchRActivityFragment.OnFragmentIntera
                     when (tablayout_searchm.selectedTabPosition) {
                         0 -> {
 
-                            var trimmedQuery = query.substring(0,query.length -1)
-                            trendTagViewModel.addhistory(trimmedQuery)
-                            uptopage(trimmedQuery)
+                            trendTagViewModel.addhistory(query.trim())
+                            uptopage(query.trim())
                         }
                         1 -> {
                             for (i in query) {
@@ -167,6 +166,7 @@ class SearchRActivity : RinkActivity(), SearchRActivityFragment.OnFragmentIntera
                 if (tablayout_searchm.selectedTabPosition != 0) {
                     return true
                 }
+//                lastSearchQuery = newText.toString()
                 if (!newText.isNullOrBlank()){
                     var searchText = newText.replace(lastSearchQuery, "")
                     tagsTextViewModel.onQueryTextChange(searchText)

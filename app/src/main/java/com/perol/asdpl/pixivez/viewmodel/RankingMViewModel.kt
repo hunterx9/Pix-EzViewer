@@ -39,6 +39,11 @@ class RankingMViewModel : ViewModel() {
         retrofitRespository.getIllustRanking(mode, picdata).subscribe({
             nexturl.value = it.next_url
             illusts.value = ArrayList<Illust>(it.illusts)
+
+            retrofitRespository.getNext(nexturl.value!!).subscribe({
+                nexturl.value = it.next_url
+                addillusts.value = it.illusts as ArrayList<Illust>?
+            }, {}, {})
         }, { it.printStackTrace() }, {})
     }
 
@@ -53,6 +58,21 @@ class RankingMViewModel : ViewModel() {
         retrofitRespository.getNext(nexturl.value!!).subscribe({
             nexturl.value = it.next_url
             addillusts.value = it.illusts as ArrayList<Illust>?
+
+            retrofitRespository.getNext(nexturl.value!!).subscribe({
+                nexturl.value = it.next_url
+                addillusts.value = it.illusts as ArrayList<Illust>?
+
+                if (nexturl.value != null) {
+                    retrofitRespository.getNext(nexturl.value!!).subscribe({
+                        val lists = ArrayList<Illust>(it.illusts)
+                        val listss = addillusts.value
+                        listss!!.addAll(lists)
+                        addillusts.value = listss
+                        nexturl.value = it.next_url
+                    }, {}, {})
+                }
+            }, {}, {})
         }, {}, {})
     }
 

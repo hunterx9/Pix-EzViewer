@@ -286,9 +286,9 @@ class Works {
                             activty.runOnUiThread {
                                 try {
                                     val dialogs =
-                                        MaterialAlertDialogBuilder(activty).setTitle("发现新版本")
+                                        MaterialAlertDialogBuilder(activty).setTitle("Update to newest version")
                                             .setMessage(versionName)
-                                            .setPositiveButton("前往更新") { i, j ->
+                                            .setPositiveButton("Github") { i, j ->
                                                 try {
                                                     val uri =
                                                         Uri.parse("https://github.com/Notsfsssf/Pix-EzViewer")
@@ -301,11 +301,11 @@ class Works {
                                                         Toast.LENGTH_SHORT
                                                     ).show()
                                                 }
-                                            }.setNegativeButton("提醒设置") { i, j ->
+                                            }.setNegativeButton("Go to Settings") { i, j ->
                                                 val intent =
                                                     Intent(activty, SettingActivity::class.java)
                                                 activty.startActivity(intent)
-                                            }.setNeutralButton("此版不提示") { i, j ->
+                                            }.setNeutralButton("Ignore this version") { i, j ->
                                                 defaultSharedPreferences.edit()
                                                     .putString("ignoreversion", versioncode).apply()
                                             }

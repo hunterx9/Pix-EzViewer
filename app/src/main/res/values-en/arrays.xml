@@ -36,15 +36,15 @@
         <item>high（low）</item>
     </string-array>
     <string-array name="modellist" >
-          <item>day</item>
-          <item>day_male</item>
-          <item>day_female</item>
-          <item>week_original</item>
-          <item>week_rookie</item>
-          <item>week</item>
-          <item>month</item>
-          <item>XVIII</item>
-          <item>XVIII_Week</item>
+        <item>XVIII</item>
+        <item>XVIII_Week</item>
+        <item>day</item>
+        <item>day_male</item>
+        <item>day_female</item>
+        <item>week_original</item>
+        <item>week_rookie</item>
+        <item>week</item>
+        <item>month</item>
     </string-array>
     <string-array name="dark_mode">
         <item>FOLLOW_SYSTEM</item>

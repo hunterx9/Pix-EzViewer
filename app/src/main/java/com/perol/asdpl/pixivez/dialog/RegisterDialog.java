@@ -159,7 +159,7 @@ public class RegisterDialog extends DialogFragment {
 
                                         @Override
                                         public void onError(Throwable e) {
-                                            Toasty.Companion.error(context, "发生错误，请尝试用刚注册的PIXIVID作为用户名登录").show();
+                                            Toasty.Companion.error(context, "An error occurred, please try to log in with the newly registered PIXIVID as the username.").show();
                                             Intent intent = new Intent(context, LoginActivity.class);
 
                                             startActivity(intent);
@@ -168,7 +168,7 @@ public class RegisterDialog extends DialogFragment {
 
                                         @Override
                                         public void onComplete() {
-                                            Toasty.Companion.success(context, "完善验证信息成功", Toast.LENGTH_LONG).show();
+                                            Toasty.Companion.success(context, "Authentication success", Toast.LENGTH_LONG).show();
                                             Intent intent = new Intent(context, HelloMActivity.class);
                                             sharedPreferencesServices.setBoolean("isnone", false);
                                             getActivity().finish();
@@ -181,7 +181,8 @@ public class RegisterDialog extends DialogFragment {
 
                             @Override
                             public void onError(Throwable e) {
-                                Toasty.Companion.error(context, "完善验证信息失败，请检查邮箱地址，PIXIVID是否有误").show();
+                                Toasty.Companion.error(context, "Failed to improve the verification" +
+                                        " information, please check the email address, PIXIVID is wrong").show();
                             }
 
                             @Override
