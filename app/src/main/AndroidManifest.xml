@@ -86,6 +86,7 @@
             android:label="@string/title_activity_login" />
         <activity
             android:name=".activity.PictureActivity"
+            android:excludeFromRecents="true"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".activity.ZoomActivity" />
         <activity android:name=".activity.UserFollowActivity" />
@@ -128,6 +129,7 @@
 
         <activity
             android:name=".activity.SearchResultActivity"
+            android:excludeFromRecents="true"
             android:label="@string/title_activity_search_result" />
         <activity android:name=".activity.HistoryMActivity" />
         <activity android:name=".activity.UserShowActivity" />

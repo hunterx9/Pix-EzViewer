@@ -60,8 +60,16 @@ class IllustfragmentViewModel : BaseViewModel() {
                         retrofitRespository.getNext(nexturl.value!!).subscribe({
                             addIllusts.value = ArrayList<Illust>(it.illusts)
                             nexturl.value = it.next_url
+
+                            if (nexturl.value != null) {
+                                retrofitRespository.getNext(nexturl.value!!).subscribe({
+                                    addIllusts.value = ArrayList<Illust>(it.illusts)
+                                    nexturl.value = it.next_url
+                                }, {}, {}).add()
+                            }
                         }, {}, {}).add()
                     }
+
                 }, {
                     it.printStackTrace()
                 }, {}).add()

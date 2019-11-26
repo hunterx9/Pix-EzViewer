@@ -59,6 +59,7 @@ class UserMActivity : RinkActivity() {
     var id: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         ThemeUtil.themeInit(this)
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivityUserMBinding>(this, R.layout.activity_user_m).apply {

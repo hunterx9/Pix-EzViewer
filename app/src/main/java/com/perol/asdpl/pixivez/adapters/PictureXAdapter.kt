@@ -251,7 +251,7 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
                         val sTag = s.tags[position]
                         if (sTag.translated_name != null)
                             appDatabase.searchhistoryDao()
-                                .insert(SearchHistoryEntity(sTag.name + "-" + sTag.translated_name))
+                                .insert(SearchHistoryEntity(sTag.name + "|" + sTag.translated_name))
                         else {
                             appDatabase.searchhistoryDao()
                                 .insert(SearchHistoryEntity(sTag.name))

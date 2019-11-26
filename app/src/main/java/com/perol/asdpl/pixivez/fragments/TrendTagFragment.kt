@@ -123,8 +123,8 @@ class TrendTagFragment : Fragment() {
     private fun upToPage(query: String) {
         val bundle = Bundle()
         var nameQuery = query
-        if (query.contains('-')){
-            val splits = query.split('-')
+        if (query.contains('|')) {
+            val splits = query.split('|')
             nameQuery = splits[0]
         }
         bundle.putString("searchword", nameQuery)

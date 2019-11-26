@@ -30,6 +30,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
@@ -53,6 +54,7 @@ class SearchResultActivity : RinkActivity() {
     var arrayList = ArrayList<Fragment>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         ThemeUtil.themeInit(this)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_search_result)
         binding.lifecycleOwner = this
@@ -66,7 +68,10 @@ class SearchResultActivity : RinkActivity() {
 
                 val isR18all =
                     PreferenceManager.getDefaultSharedPreferences(this).getBoolean("r18all", false)
-                if (isR18all) searchword += " R-18"
+                if (isR18all) {
+                    if (!searchword.contains("R-18"))
+                        searchword += " R-18"
+                }
 
             } catch (e: Exception) {
 

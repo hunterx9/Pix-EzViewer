@@ -46,6 +46,7 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.viewmodel.IllustfragmentViewModel
 import kotlinx.android.synthetic.main.fragment_illust.*
 import kotlinx.coroutines.runBlocking
+import java.util.stream.Collectors
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -98,6 +99,16 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
         recyclerview_illust.adapter = searchIllustAdapter
 
         recyclerview_illust.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+
+        fab_sort.setOnClickListener {
+            val sorted_data =
+                searchIllustAdapter.data.sortedWith(compareBy { it.total_bookmarks }).reversed()
+                    .stream().distinct().collect(
+                    Collectors.toList()
+                )
+            searchIllustAdapter.replaceData(sorted_data)
+            recyclerview_illust.scrollToPosition(0)
+        }
         fab.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(activity)
             val arrayList = arrayOfNulls<String>(starnum.size)
@@ -201,11 +212,10 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun filterIllust(it:java.util.ArrayList<Illust>): ArrayList<Illust> {
-        var filteredIllusts = listOf<Illust>()
-        try {
+        var filteredIllusts: List<Illust>
 
-            val isR18all =
-                PreferenceManager.getDefaultSharedPreferences(context).getBoolean("r18all", false)
+        val isR18all =
+            PreferenceManager.getDefaultSharedPreferences(context).getBoolean("r18all", false)
             val isR18no =
                 PreferenceManager.getDefaultSharedPreferences(context).getBoolean("r18no", false)
             if (isR18all) {
@@ -258,18 +268,19 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
                 filteredIllusts = it
             }
 
-        } catch (e: Exception) {
-
-        }
 
         val illust = arrayListOf<Illust>()
+
+
         illust.addAll(filteredIllusts)
+
         return illust
     }
 
     private fun addIllust(it: java.util.ArrayList<Illust>) {
         searchIllustAdapter.addData(it)
         searchIllustAdapter.loadMoreComplete()
+
     }
 
     private var position: Int? = null
@@ -293,6 +304,7 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
     private fun updateillust(it: ArrayList<Illust>?) {
         if (it != null) {
             searchIllustAdapter.setNewData(it)
+
         }
 
     }

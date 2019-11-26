@@ -64,32 +64,32 @@ class LoginActivity : RinkActivity() {
     private var username: String? = null
     private var password: String? = null
     private var sharedPreferencesServices: SharedPreferencesServices? = null
-    val markdownShot = "# TroubleShoot帮助\n" +
-            "如果你登录时提示\n" +
-            "```shell\n" +
-            "    http 400 bad request\n" +
-            "```\n" +
-            "请尝试以下步骤  \n" +
-            "1.确保应用是最新的，到google play或者github获取最新的版本  \n" +
-            "2.已是最新版，则用户名或者密码有错(104:)，需要核对账号密码  \n" +
-            "3.账号未完成验证或者用户账号无效(103:)，需要到官网进行验证完善  \n" +
-            "ps:账号密码指的是pixiv的账号密码，而不是github的\n" +
-            "\n" +
-            "\n" +
-            "如果登录后提示\n" +
-            "```shell\n" +
-            "    程序出错，即将退出,xx resourece not found\n" +
-            "```\n" +
-            "1.确保应用是最新的，到google play或者github获取最新的版本  \n" +
-            "2.确保应用是google play或者github获取的，而不是别人传的甚至某某dalao卖的  \n" +
-            "3.到以上渠道安装完最新版本后，清除应用数据并重新尝试登录\n" +
-            "\n" +
-            "## 若都无帮助\n" +
-            "请通过反馈邮箱，详细反馈版本号，系统信息，错误信息截图  \n" +
-            "反馈之前,你需要确保  \n" +
-            "1.应用是google play或者github获取的  \n" +
-            "2.不是使用尝鲜系统或者使用xposed或者magisk模块进行过魔改  \n" +
-            "3.已仔细阅读完毕\"请务必读完\""
+    val markdownShot = "# TroubleShoot help \\ n \"+\n" +
+            "            \"If you are prompted \\ n\" when you log in +\n" +
+            "            \"` `` shell \\ n \"+\n" +
+            "            \"http 400 bad request \\ n\" +\n" +
+            "            \"` `` \\ n \"+\n" +
+            "            \"Try the following steps \\ n\" +\n" +
+            "            \"1. Make sure the application is up to date, go to google play or github to get the latest version \\ n\" +\n" +
+            "            \"2. It is the latest version, the username or password is wrong (104 :), you need to check the account password \\ n\" +\n" +
+            "            \"3. The account is not verified or the user account is invalid (103 :), you need to go to the official website for verification and improvement \\ n\" +\n" +
+            "            \"ps: account password refers to pixiv account password, not github \\ n\" +\n" +
+            "            \"\\ n\" +\n" +
+            "            \"\\ n\" +\n" +
+            "            \"If prompted after login \\ n\" +\n" +
+            "            \"` `` shell \\ n \"+\n" +
+            "            \"Program error, exiting soon, xx resourece not found \\ n\" +\n" +
+            "            \"` `` \\ n \"+\n" +
+            "            \"1. Make sure the application is up to date, go to google play or github to get the latest version \\ n\" +\n" +
+            "            \"2. Make sure the application is obtained by google play or github, and not passed by others or even dalao \\ n\" +\n" +
+            "            \"3. After installing the latest version to the above channels, clear the app data and try to log in again \\ n\" +\n" +
+            "            \"\\ n\" +\n" +
+            "            \"## If it doesn't help \\ n\" +\n" +
+            "            \"Please feedback the version number, system information, and error message screenshot through the feedback mailbox \\ n\" +\n" +
+            "            \"Before feedback, you need to make sure \\ n\" +\n" +
+            "            \"1. The application is obtained by google play or github \\ n\" +\n" +
+            "            \"2. Not using the early adopter system or using xposed or magisk modules to make magic changes \\ n\" +\n" +
+            "            \"3. Read it carefully \\\" Please be sure to read it \\"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,11 +134,31 @@ class LoginActivity : RinkActivity() {
             }
             if (!sharedPreferencesServices!!.getBoolean("firstinfo")) {
                 val normalDialog = MaterialAlertDialogBuilder(this)
-                normalDialog.setMessage("0.请务必确保在google play或者项目地址内安装与更新,第三方提供的安装包可能存在问题且不是最新\n1.在图片详情页长按可以保存选定图片，长按头像快速关注作者，请提供应用权限\n2.浏览动图时，点击中间0%进度条开始下载,完毕播放后长按进行合成保存，合成过程内存开销相当之大,偶发崩溃不可避免\n3.若播放动图无法播放,请退出页面或者清除缓存后重试,这一般会起作用\n" +
-                        "4.这是一个个人开发的应用,反馈请发邮件到设置页标注的邮箱,个人精力和能力是有限的,请不要使用极端方式进行反馈,体谅开发者,也欢迎共同开发设计\n5.遇到更新后闪退的问题,请尝试清除应用数据并更新到最新版,将提示错误信息或日志反馈给开发者,多数情况下这是有效的\n6.限制总开关在官网里，遇到无权限访问的插画，自行至网页开启，开发者不提供帮助服务，开发者并不是老好人"
+                normalDialog.setMessage(
+                    "0. Please make sure to install and update in google play or project address. " +
+                            "Installation packages provided by third parties may have problems and " +
+                            "are not up-to-date \\ n1. Long press on the picture details page to save" +
+                            " the selected picture, long press the avatar to quickly follow the author" +
+                            ", Please provide application permissions \\ n2. When browsing the animation," +
+                            " click the 0% progress bar in the middle to start downloading. After" +
+                            " finishing playing, press and hold to save the composition. The memory" +
+                            " overhead of the composition process is quite large, and occasional crashes" +
+                            " are unavoidable \\ n3. If the animation cannot be played Play, please " +
+                            "exit the page or clear the cache and try again. This will generally work/" +
+                            "\\4. This is a personally developed application." +
+                            " Please send an email to the mailbox marked on the settings page for feedback." +
+                            " Personal energy and ability are limited. Please do not use extreme methods for" +
+                            " feedback. Be considerate of developers and welcome joint development and design. " +
+                            "\\ N5. If you encounter flashback issues after the update, please try to clear " +
+                            "the application data and update to the latest version, and feedback the error " +
+                            "message or log to the developer. In most cases, this is valid. \\ N6. " +
+                            "Limit the master switch on the official website. The illustrations without" +
+                            " permission to access are opened on the website by themselves. The developers " +
+                            "do not provide help services.  "
                 )
-                normalDialog.setTitle("请务必读完")
-                normalDialog.setPositiveButton("我已知晓"
+                normalDialog.setTitle("Be sure to read")
+                normalDialog.setPositiveButton(
+                    "I accept"
                 ) { _, _ ->
                     sharedPreferencesServices!!.setBoolean("firstinfo", true)
                 }

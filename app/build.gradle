@@ -33,7 +33,7 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.perol.asdpl.play.pixivez"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 29
         versionCode VERSIONCODE.toInteger()
         versionName VERSIONNAME
@@ -52,6 +52,7 @@ android {
             buildConfigField("Boolean", "ISGOOGLEPLAY", ISGOOGLEPLAY)
         }
         debug {
+            applicationIdSuffix ".debug"
             ndk {
                 abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips', 'mips64'
             }

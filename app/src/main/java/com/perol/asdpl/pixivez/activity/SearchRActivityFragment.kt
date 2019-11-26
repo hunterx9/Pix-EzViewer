@@ -59,7 +59,7 @@ class SearchRActivityFragment : Fragment() {
         tagsTextAdapter.setOnItemClickListener { adapter, view, position ->
             val s_tag = tags[position]
             if (s_tag.translated_name != null)
-                tagsTextViewModel.addhistory(s_tag.name + "-" + s_tag.translated_name)
+                tagsTextViewModel.addhistory(s_tag.name + "|" + s_tag.translated_name)
             else tagsTextViewModel.addhistory(s_tag.name)
             this.mListener!!.onFragmentInteraction(s_tag.name)
 //            val bundle = Bundle()
