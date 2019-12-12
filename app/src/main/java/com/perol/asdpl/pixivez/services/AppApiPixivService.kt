@@ -148,6 +148,12 @@ interface AppApiPixivService {
     fun postAddIllustBrowsingHistory(@Header("Authorization") paramString: String, @Field("illust_ids[]") paramList: List<Long>): Observable<ResponseBody>
 
 
+    @GET("/v2/illust/related?filter=for_android")
+    fun getIllustRecommendedNext(
+        @Header("Authorization") paramString: String, @Query("illust_id") paramLong: Long, @Query(
+            "seed_illust_ids%5B0%5D"
+        ) longIdSame: Long, @Query("offset") offset: Int
+    ): Observable<RecommendResponse>
 
 
     @GET("/v1/illust/ranking?filter=for_android")
