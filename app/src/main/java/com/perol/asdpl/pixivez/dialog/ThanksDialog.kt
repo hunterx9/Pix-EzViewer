@@ -114,7 +114,6 @@ class ThanksDialog : DialogFragment() {
         "moreki",
         "布鲁斯赧",
         "一只贱贱的熊",
-        "moreki",
         "翱",
         "DYCxhn",
         "圈",
@@ -216,15 +215,33 @@ class ThanksDialog : DialogFragment() {
         "勒紧裤腰",
         "*泽鸿",
         "bilibili村长",
-        "*承"
+        "*承",
+        "*",
+        "*雷",
+        "d*t",
+        "*喵",
+        ":*|",
+        "辰",
+        "*子予",
+        "志鹏",
+        "2az",
+        "Myth",
+        "Namelost",
+        "韵秋",
+        "卷柏泡茶",
+        "闪耀的shining",
+        "相信自己",
+        "钰"
     )
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = MaterialAlertDialogBuilder(activity!!)
-        val inflater = activity!!.layoutInflater
+        val builder = MaterialAlertDialogBuilder(requireActivity())
+        val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(R.layout.dialog_thanks, null)
         val re = view.findViewById<RecyclerView>(R.id.list)
-        re.adapter = ThanksAdapter(R.layout.simple_list_item, array)
+        re.adapter = ThanksAdapter(R.layout.simple_list_item, array).apply {
+            setHeaderView(inflater.inflate(R.layout.dialog_thanks_header, null))
+        }
         re.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         builder.setView(view)
         return builder.create()

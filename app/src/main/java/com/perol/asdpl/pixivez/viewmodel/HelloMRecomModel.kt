@@ -70,7 +70,7 @@ class HelloMRecomModel : BaseViewModel() {
         }, {}, {}).add()
     }
 
-    fun OnRefreshListener() {
+    fun onRefresh() {
         retrofitRespository.getRecommend().subscribe({
             nexturl.value = it.next_url
             illusts.value = it.illusts as ArrayList<Illust>?
@@ -83,13 +83,13 @@ class HelloMRecomModel : BaseViewModel() {
 
     fun onItemChildLongClick(id: Illust) {
         if (id.is_bookmarked) {
-            retrofitRespository.postUnlikeIllust(id.id.toLong())!!.subscribe({
+            retrofitRespository.postUnlikeIllust(id.id).subscribe({
                 bookmarknum.value = id
-            }, {}, {})
+            }, {}, {}).add()
         } else {
             retrofitRespository.postLikeIllust(id.id)!!.subscribe({
                 bookmarknum.value = id
-            }, {}, {})
+            }, {}, {}).add()
         }
     }
 

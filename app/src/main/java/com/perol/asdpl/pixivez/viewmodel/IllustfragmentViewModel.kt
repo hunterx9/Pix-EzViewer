@@ -27,9 +27,20 @@ package com.perol.asdpl.pixivez.viewmodel
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.repository.RetrofitRespository
 import com.perol.asdpl.pixivez.responses.Illust
+import java.util.*
+import kotlin.collections.ArrayList
+
+fun Calendar?.generateDateString(): String? {
+    if (this == null) {
+        return this;
+    }
+    return "${this.get(Calendar.YEAR)}-${this.get(Calendar.MONTH) + 1}-${this.get(Calendar.DATE)}"
+}
 
 class IllustfragmentViewModel : BaseViewModel() {
-
+    var sortT = arrayOf("date_desc", "date_asc", "popular_desc")
+    var search_targetT =
+        arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
 
     var illusts = MutableLiveData<ArrayList<Illust>>()
     var addIllusts = MutableLiveData<ArrayList<Illust>>()
@@ -37,42 +48,58 @@ class IllustfragmentViewModel : BaseViewModel() {
     var nexturl = MutableLiveData<String>()
     var bookmarkid = MutableLiveData<Long>()
     var isRefresh = MutableLiveData<Boolean>(false)
+    val sort = MutableLiveData<String>(sortT[0])
+    val searchTarget = MutableLiveData<String>(search_targetT[0])
+    val startDate = MutableLiveData<Calendar>()
+    val endDate = MutableLiveData<Calendar>()
     fun setPreview(word: String, sort: String, search_target: String?, duration: String?) {
         isRefresh.value = true
         retrofitRespository.getSearchIllustPreview(word, sort, search_target, null, duration)
-                .subscribe({
-                    illusts.value = ArrayList<Illust>(it.illusts)
-                    nexturl.value = it.next_url
-                    isRefresh.value = false
-                }, {
-                    it.printStackTrace()
-                }, {}).add()
+            .subscribe({
+                illusts.value = ArrayList<Illust>(it.illusts)
+                nexturl.value = it.next_url
+                isRefresh.value = false
+            }, {
+                it.printStackTrace()
+            }, {}).add()
     }
 
-    fun firstsetdata(word: String, sort: String, search_target: String?, duration: String?) {
+
+    fun firstSetData(word: String) {
         isRefresh.value = true
-        retrofitRespository.getSearchIllust(word, sort, search_target, null, duration)
-                .subscribe({
-                    illusts.value = ArrayList<Illust>(it.illusts)
-                    nexturl.value = it.next_url
-                    isRefresh.value = false
-                    if (nexturl.value != null) {
-                        retrofitRespository.getNext(nexturl.value!!).subscribe({
-                            addIllusts.value = ArrayList<Illust>(it.illusts)
-                            nexturl.value = it.next_url
+        if ((startDate.value != null || endDate.value != null) && (startDate.value != null && endDate.value != null) && startDate.value!!.timeInMillis >= endDate.value!!.timeInMillis) {
+            startDate.value = null
+            endDate.value = null
+        }
 
-                            if (nexturl.value != null) {
-                                retrofitRespository.getNext(nexturl.value!!).subscribe({
-                                    addIllusts.value = ArrayList<Illust>(it.illusts)
-                                    nexturl.value = it.next_url
-                                }, {}, {}).add()
-                            }
-                        }, {}, {}).add()
-                    }
+        retrofitRespository.getSearchIllust(
+            word,
+            sort.value!!,
+            searchTarget.value!!,
+            startDate.value.generateDateString(),
+            endDate.value.generateDateString(),
+            null
+        )
+            .subscribe({
+                illusts.value = ArrayList<Illust>(it.illusts)
+                nexturl.value = it.next_url
+                isRefresh.value = false
+                if (nexturl.value != null) {
+                    retrofitRespository.getNext(nexturl.value!!).subscribe({
+                        addIllusts.value = ArrayList<Illust>(it.illusts)
+                        nexturl.value = it.next_url
 
-                }, {
-                    it.printStackTrace()
-                }, {}).add()
+                        if (nexturl.value != null) {
+                            retrofitRespository.getNext(nexturl.value!!).subscribe({
+                                addIllusts.value = ArrayList<Illust>(it.illusts)
+                                nexturl.value = it.next_url
+                            }, {}, {}).add()
+                        }
+                    }, {}, {}).add()
+                }
+            }, {
+                it.printStackTrace()
+            }, {}).add()
     }
 
     fun onLoadMoreListen() {

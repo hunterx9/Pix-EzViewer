@@ -92,7 +92,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">LoginActivity</string>
     <item name="tag_first" type="id"></item>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_search">SearchActivity</string>
     <string name="title_activity_user">UserActivity</string>
@@ -164,7 +163,7 @@
     <string name="savepath">Save path</string>
     <string name="secondpath">Second path</string>
     <string name="startpage">Initial page</string>
-    <string name="try_to_login">Logggin in..</string>
+    <string name="try_to_login">Loggin in..</string>
     <string name="pixel">Pixel</string>
     <string name="view">Views</string>
     <string name="bookmark">Bookmarks</string>
@@ -244,6 +243,15 @@
     <string name="dark_mode">Dark Mode</string>
     <string name="restart_now">Restart Now</string>
     <string name="account_management">Account MGT</string>
+    <string name="auto_check_update">Auto check update</string>
+    <string name="half_year">Half_Year</string>
+    <string name="a_year">A Year</string>
+    <string name="unlimit">UnLimit</string>
+    <string name="bookmark_private">private</string>
+    <string name="bookmark_public">public</string>
+    <string name="start_date">Start Date</string>
+    <string name="end_date">End Date</string>
+    <string name="choice_date">Choice Date</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>

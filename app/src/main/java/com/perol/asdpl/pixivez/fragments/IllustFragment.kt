@@ -79,13 +79,15 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
                     if (!user.ispro) {
                         Toasty.error(PxEZApp.instance, "not premium!").show()
                         viewModel.setPreview(param1!!, sort[position], null, null)
-                    } else
-                        viewModel.firstsetdata(param1!!, sort[selectSort], null, null)
+                    } else {
+                        viewModel.sort.value = sort[position]
+                        viewModel.firstSetData(param1!!)
+                    }
 
                 }
             } else {
-
-                viewModel.firstsetdata(param1!!, sort[selectSort], null, null)
+                viewModel.sort.value = sort[position]
+                viewModel.firstSetData(param1!!)
             }
         }
 
@@ -102,7 +104,11 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
         else
             activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         val searchtext = activity!!.findViewById<TextView>(R.id.searchtext)
-        searchIllustAdapter = RecommendAdapter(R.layout.view_recommand_item, ArrayList<Illust>(), PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("r18on", false))
+        searchIllustAdapter = RecommendAdapter(
+            R.layout.view_recommand_item,
+            ArrayList<Illust>(),
+            PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("r18on", false)
+        )
         searchtext.text = param1
         recyclerview_illust.adapter = searchIllustAdapter
 
@@ -117,6 +123,8 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
             searchIllustAdapter.replaceData(sorted_data)
             recyclerview_illust.scrollToPosition(0)
         }
+        recyclerview_illust.layoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         fab.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(activity)
             val arrayList = arrayOfNulls<String>(starnum.size)
@@ -126,34 +134,27 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
                 else
                     arrayList[i] = (param1 + " " + starnum[i].toString() + "users入り")
             }
-
             builder.setTitle("users入り")
-                .setItems(arrayList
-                ) { dialog, which ->
+                .setItems(
+                    arrayList
+                ) { _, which ->
 
                     val query = if (starnum[which] == 0)
                         "$param1 users入り"
                     else
                         param1 + " " + starnum[which].toString() + "users入り"
-                    viewModel.firstsetdata(query, sort[selectSort], null, null)
+                    viewModel.firstSetData(query)
                     recyclerview_illust.scrollToPosition(0)
                 }
             builder.create().show()
         }
         val imageButton = activity!!.findViewById<ImageButton>(R.id.imagebutton_section)
         imageButton.setOnClickListener {
-            val searchSectionDialog = SearchSectionDialog()
-            searchSectionDialog.callback = object : SearchSectionDialog.Callback {
-                override fun onClick(search_target: Int, sort: Int, duration: Int) {
-                    selectSort = sort
-                    selectTarget = search_target
-                    selectDuration = duration
-                    viewModel.firstsetdata(param1!!, this@IllustFragment.sort[sort], this@IllustFragment.search_target[search_target],
-                        this@IllustFragment.duration[duration])
+            SearchSectionDialog().apply {
+                arguments = Bundle().apply {
+                    putString("word", param1!!)
                 }
-
-            }
-            searchSectionDialog.show(childFragmentManager)
+            }.show(childFragmentManager)
         }
         searchIllustAdapter.setOnLoadMoreListener({
             viewModel.onLoadMoreListen()
@@ -163,21 +164,38 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
                 val user = AppDataRepository.getUser()
                 if (!user.ispro && selectSort == 2) {
                     Toasty.error(PxEZApp.instance, "not premium!").show()
-                    viewModel.setPreview(param1!!, sort[selectSort], search_target[selectTarget], duration[selectDuration])
-                } else
-                    viewModel.firstsetdata(param1!!, sort[selectSort], search_target[selectTarget], duration[selectDuration])
+                    viewModel.setPreview(
+                        param1!!,
+                        sort[selectSort],
+                        search_target[selectTarget],
+                        duration[selectDuration]
+                    )
+                } else {
+                    viewModel.firstSetData(
+                        param1!!
+                    )
+                }
             }
         }
         val spinner: Spinner = activity!!.findViewById<Spinner>(R.id.spinner_result)
         spinner.onItemSelectedListener = this
     }
 
-    private val starnum = intArrayOf(50000, 30000, 20000, 10000, 5000, 1000, 500, 250, 100,0)
+    private val starnum = intArrayOf(50000, 30000, 20000, 10000, 5000, 1000, 500, 250, 100, 0)
     private var param1: String? = null
     lateinit var searchIllustAdapter: RecommendAdapter
     var sort = arrayOf("date_desc", "date_asc", "popular_desc")
-    var search_target = arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
-    var duration = arrayOf("within_last_day", "within_last_week", "within_last_month")
+    var search_target =
+        arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
+
+    var duration = arrayOf(
+        null,
+        "within_last_day",
+        "within_last_week",
+        "within_last_month",
+        "within_half_year",
+        "within_year"
+    )
     var selectSort: Int = 0
     var selectTarget: Int = 0
     var selectDuration: Int = 0
@@ -189,9 +207,14 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
 
         }
         lazyLoad()
+
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
 
         return inflater.inflate(R.layout.fragment_illust, container, false)
@@ -294,9 +317,12 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
     private var position: Int? = null
     private fun changetoblue(it: Long?) {
         if (it != null) {
-            val item = searchIllustAdapter.getViewByPosition(recyclerview_illust, position!!, R.id.linearlayout_isbookmark) as LinearLayout
-            item.setBackgroundColor(
-                Color.BLUE)
+            val item = searchIllustAdapter.getViewByPosition(
+                recyclerview_illust,
+                position!!,
+                R.id.linearlayout_isbookmark
+            ) as LinearLayout
+            item.setBackgroundColor(Color.YELLOW)
             Toasty.success(activity!!.applicationContext, "收藏成功", Toast.LENGTH_SHORT).show()
         }
     }

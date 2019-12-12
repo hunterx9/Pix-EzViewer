@@ -168,7 +168,8 @@ class LoginActivity : RinkActivity() {
 
         }
         val restClient = RestClient()
-        val oAuthSecureService = restClient.getretrofit_OAuthSecure().create(OAuthSecureService::class.java)
+        val oAuthSecureService =
+            restClient.getretrofit_OAuthSecure().create(OAuthSecureService::class.java)
         textview_help.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(this)
             val view = layoutInflater.inflate(R.layout.new_dialog_user_help, null)
@@ -217,12 +218,13 @@ class LoginActivity : RinkActivity() {
         })
 
         loginBtn!!.setOnClickListener {
-//            loginBtn.isClickable = false
+            //            loginBtn.isClickable = false
 
-            username = edit_username!!.text.toString()
+            username = edit_username!!.text.toString().trim()
             password = edit_password!!.text.toString()
 
-            if (username.isNullOrBlank()) accountTextInputLayout.error = getString(R.string.error_blank_account)
+            if (username.isNullOrBlank()) accountTextInputLayout.error =
+                getString(R.string.error_blank_account)
 
             if (password.isNullOrBlank()) passwordTextInputLayout.error =
                 getString(R.string.error_blank_password)
@@ -249,61 +251,78 @@ class LoginActivity : RinkActivity() {
             map["include_policy"] = true
 
             oAuthSecureService.postAuthToken(map).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribe(object : Observer<PixivOAuthResponse> {
-                        override fun onSubscribe(d: Disposable) {
-                            Toast.makeText(applicationContext, getString(R.string.try_to_login), Toast.LENGTH_SHORT).show()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : Observer<PixivOAuthResponse> {
+                    override fun onSubscribe(d: Disposable) {
+                        Toast.makeText(
+                            applicationContext,
+                            getString(R.string.try_to_login),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    override fun onNext(pixivOAuthResponse: PixivOAuthResponse) {
+                        val user = pixivOAuthResponse.response.user
+                        GlobalScope.launch {
+                            AppDataRepository.insertUser(
+                                UserEntity(
+                                    user.profile_image_urls.px_170x170,
+                                    user.id.toLong(),
+                                    user.name,
+                                    user.mail_address,
+                                    user.isIs_premium,
+                                    pixivOAuthResponse.response.device_token,
+                                    pixivOAuthResponse.response.refresh_token,
+                                    "Bearer " + pixivOAuthResponse.response.access_token
+                                )
+                            )
+
+                            sharedPreferencesServices!!.setBoolean("isnone", false)
+                            sharedPreferencesServices!!.setString("username", username)
+                            sharedPreferencesServices!!.setString("password", password)
+
                         }
+                    }
 
-                        override fun onNext(pixivOAuthResponse: PixivOAuthResponse) {
-                            val user = pixivOAuthResponse.response.user
-                            GlobalScope.launch {
-                                AppDataRepository.insertUser(
-                                    UserEntity(
-                                        user.profile_image_urls.px_170x170,
-                                        user.id.toLong(),
-                                        user.name,
-                                        user.mail_address,
-                                        user.isIs_premium,
-                                        pixivOAuthResponse.response.device_token, pixivOAuthResponse.response.refresh_token, "Bearer " + pixivOAuthResponse.response.access_token
-                                ))
-
-                                sharedPreferencesServices!!.setBoolean("isnone", false)
-                                sharedPreferencesServices!!.setString("username", username)
-                                sharedPreferencesServices!!.setString("password", password)
-
-                            }
-                        }
-
-                        override fun onError(e: Throwable) {
+                    override fun onError(e: Throwable) {
 //                            loginBtn.isClickable = true
-                            loginBtn.isEnabled = true
+                        loginBtn.isEnabled = true
 
-                            textview_help.visibility = View.VISIBLE
-                            if (e is HttpException) {
-                                try {
-                                    val errorBody = e.response()?.errorBody()?.string()
-                                    val gson = Gson()
-                                    val errorResponse = gson.fromJson<ErrorResponse>(errorBody, ErrorResponse::class.java)
+                        textview_help.visibility = View.VISIBLE
+                        if (e is HttpException) {
+                            try {
+                                val errorBody = e.response()?.errorBody()?.string()
+                                val gson = Gson()
+                                val errorResponse = gson.fromJson<ErrorResponse>(
+                                    errorBody,
+                                    ErrorResponse::class.java
+                                )
 
-                                    var errMsg = "${e.message}\n${errorResponse.errors.system.message}"
+                                var errMsg = "${e.message}\n${errorResponse.errors.system.message}"
 
-                                    if (errorResponse.has_error && errorResponse.errors.system.message.contains(Regex(""".*103:.*"""))) {
-                                        errMsg = getString(R.string.error_invalid_account_password)
-                                    }
-
-                                    Toast.makeText(applicationContext, errMsg, Toast.LENGTH_LONG).show()
-                                } catch (e1: IOException) {
-                                    Toast.makeText(applicationContext, "${e.message}", Toast.LENGTH_LONG).show()
+                                if (errorResponse.has_error && errorResponse.errors.system.message.contains(
+                                        Regex(""".*103:.*""")
+                                    )
+                                ) {
+                                    errMsg = getString(R.string.error_invalid_account_password)
                                 }
 
-                            } else if (e.message!!.contains("400") && !e.message!!.contains("oauth")) {
-                                Toast.makeText(applicationContext, "${e.message}", Toast.LENGTH_LONG).show()
-                            } else {
-                                Toast.makeText(applicationContext, "${e.message}", Toast.LENGTH_LONG).show()
+                                Toast.makeText(applicationContext, errMsg, Toast.LENGTH_LONG).show()
+                            } catch (e1: IOException) {
+                                Toast.makeText(
+                                    applicationContext,
+                                    "${e.message}",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
-                        }
 
-                        override fun onComplete() {
+                        } else {
+                            Toast.makeText(applicationContext, "${e.message}", Toast.LENGTH_LONG)
+                                .show()
+                        }
+                    }
+
+                    override fun onComplete() {
 //                            loginBtn.isClickable = true
 //                            loginBtn.isEnabled = true // Avoid double logins.
 
@@ -318,9 +337,10 @@ class LoginActivity : RinkActivity() {
         Works.checkUpdate(this)
     }
 
-    fun showHelp() {
+    fun showHelp(view: View) {
 //        val intent = Intent(this@LoginActivity, NewUserActivity::class.java)
 //        startActivity(intent)
-        Toasty.info(this, this.resources.getString(R.string.registerclose), Toast.LENGTH_LONG).show()
+        Toasty.info(this, this.resources.getString(R.string.registerclose), Toast.LENGTH_LONG)
+            .show()
     }
 }

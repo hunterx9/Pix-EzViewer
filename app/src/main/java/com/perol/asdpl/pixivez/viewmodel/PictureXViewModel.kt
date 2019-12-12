@@ -29,6 +29,7 @@ import com.perol.asdpl.pixivez.repository.RetrofitRespository
 import com.perol.asdpl.pixivez.responses.BookMarkDetailResponse
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.IllustDetailResponse
+import com.perol.asdpl.pixivez.responses.RecommendResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.UnzipUtil
 import com.perol.asdpl.pixivez.sql.AppDatabase
@@ -51,13 +52,16 @@ class PictureXViewModel : BaseViewModel() {
     val startPostPone = MutableLiveData<Boolean>()
     private val appDatabase = AppDatabase.getInstance(PxEZApp.instance)
     @Throws(Exception::class)
-    fun downloadzip(medium: String) {
-
-        val zippath = "${PxEZApp.instance.cacheDir.path}/${illustDetailResponse.value!!.illust.id}.zip"
-        val file = File(zippath)
+    fun downloadZip(medium: String) {
+        val zipPath =
+            "${PxEZApp.instance.cacheDir.path}/${illustDetailResponse.value!!.illust.id}.zip"
+        val file = File(zipPath)
         if (file.exists()) {
             Observable.create<Int> { ob ->
-                UnzipUtil.UnZipFolder(file, PxEZApp.instance.cacheDir.path + "/" + illustDetailResponse.value!!.illust.id)
+                UnzipUtil.UnZipFolder(
+                    file,
+                    PxEZApp.instance.cacheDir.path + "/" + illustDetailResponse.value!!.illust.id
+                )
                 ob.onNext(1)
             }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe({
                 downloadGifSuccess.value = true
@@ -66,42 +70,44 @@ class PictureXViewModel : BaseViewModel() {
                 file.delete()
                 reDownLoadGif(medium)
 
-            }, {})
+            }, {}).add()
         } else {
             reDownLoadGif(medium)
         }
 
     }
 
-    fun loadgif(id: Long) = retrofitRespository.getUgoiraMetadata(id)
+    fun loadGif(id: Long) = retrofitRespository.getUgoiraMetadata(id)
 
-    fun reDownLoadGif(medium: String) {
-        val zippath = "${PxEZApp.instance.cacheDir}/${illustDetailResponse.value!!.illust.id}.zip"
-        val file = File(zippath)
+    private fun reDownLoadGif(medium: String) {
+        val zipPath = "${PxEZApp.instance.cacheDir}/${illustDetailResponse.value!!.illust.id}.zip"
+        val file = File(zipPath)
         progress.value = ProgressInfo(0, 0)
         retrofitRespository.getGIFFile(medium).subscribe { response ->
-            val inputstream = response.byteStream()
+            val inputStream = response.byteStream()
             Observable.create<Int> { ob ->
-
                 val output = file.outputStream()
                 println("----------")
                 progress.value!!.all = response.contentLength()
                 var bytesCopied: Long = 0
                 val buffer = ByteArray(8 * 1024)
-                var bytes = inputstream.read(buffer)
+                var bytes = inputStream.read(buffer)
                 while (bytes >= 0) {
                     output.write(buffer, 0, bytes)
                     bytesCopied += bytes
-                    bytes = inputstream.read(buffer)
+                    bytes = inputStream.read(buffer)
                     progress.value!!.now = bytesCopied
                     Observable.just(1).observeOn(AndroidSchedulers.mainThread()).subscribe {
                         progress.value = progress.value!!
                     }
                 }
-                inputstream.close()
+                inputStream.close()
                 output.close()
                 println("+++++++++")
-                UnzipUtil.UnZipFolder(file, PxEZApp.instance.cacheDir.path + "/" + illustDetailResponse.value!!.illust.id)
+                UnzipUtil.UnZipFolder(
+                    file,
+                    PxEZApp.instance.cacheDir.path + "/" + illustDetailResponse.value!!.illust.id
+                )
                 ob.onNext(1)
             }.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe({
                 downloadGifSuccess.value = true
@@ -110,7 +116,7 @@ class PictureXViewModel : BaseViewModel() {
                 it.printStackTrace()
             })
 
-        }
+        }.add()
     }
 
     fun firstGet(toLong: Long, illust: Illust?) {
@@ -123,13 +129,24 @@ class PictureXViewModel : BaseViewModel() {
                     val ee = appDatabase.illusthistoryDao().getHistoryOne(it.illust.id)
                     if (ee.isNotEmpty()) {
                         appDatabase.illusthistoryDao().deleteOne(ee[0])
-                        appDatabase.illusthistoryDao().insert(IllustBeanEntity(null, it.illust.image_urls.square_medium, it.illust.id))
+                        appDatabase.illusthistoryDao().insert(
+                            IllustBeanEntity(
+                                null,
+                                it.illust.image_urls.square_medium,
+                                it.illust.id
+                            )
+                        )
                     } else
-                        appDatabase.illusthistoryDao().insert(IllustBeanEntity(null, it.illust.image_urls.square_medium, it.illust.id))
+                        appDatabase.illusthistoryDao().insert(
+                            IllustBeanEntity(
+                                null,
+                                it.illust.image_urls.square_medium,
+                                it.illust.id
+                            )
+                        )
                 }
             }, {}, {}))
-        }
-        else {
+        } else {
 
             illustDetailResponse.value = IllustDetailResponse().also {
                 it.illust = illust
@@ -159,9 +176,17 @@ class PictureXViewModel : BaseViewModel() {
 
             aboutPics.value = it.illusts as ArrayList<Illust>?
             newRec.addAll(it.illusts as ArrayList<Illust>)
-            disposables.add(retrofitRespository.getIllustRecommendedNext(long,30).subscribe({ nextIt ->
+            disposables.add(
+                retrofitRespository.getIllustRecommendedNext(
+                    long,
+                    30
+                ).subscribe({ nextIt: RecommendResponse ->
                 newRec.addAll(nextIt.illusts as ArrayList<Illust>)
-                disposables.add(retrofitRespository.getIllustRecommendedNext(long,60).subscribe({ nextIt2 ->
+                    disposables.add(
+                        retrofitRespository.getIllustRecommendedNext(
+                            long,
+                            60
+                        ).subscribe({ nextIt2: RecommendResponse ->
                     newRec.addAll(nextIt2.illusts as ArrayList<Illust>)
                     aboutPics.value = newRec
                 }, {}, {}))
@@ -174,33 +199,42 @@ class PictureXViewModel : BaseViewModel() {
         val id = illustDetailResponse.value!!.illust.id
         val postUnlikeIllust = retrofitRespository.postUnlikeIllust(id)
         val postLikeIllust = retrofitRespository.postLikeIllust(id)
-        if (illustDetailResponse.value!!.illust.is_bookmarked!!) {
-            postUnlikeIllust!!.subscribe({
+        if (illustDetailResponse.value!!.illust.is_bookmarked) {
+            postUnlikeIllust.subscribe({
                 likeIllust.value = false
                 illustDetailResponse.value!!.illust.is_bookmarked = false
             }, {
 
-            }, {}, {})
+            }, {}, {}).add()
         } else {
             postLikeIllust!!.subscribe({
                 likeIllust.value = true
                 illustDetailResponse.value!!.illust.is_bookmarked = true
-            }, {}, {})
+            }, {}, {}).add()
         }
     }
 
     fun fabOnLongClick() {
-        val c = retrofitRespository.getBookmarkDetail(illustDetailResponse.value!!.illust.id.toLong())
-        c!!.subscribe(
-                {
-
-                    tags.value = it.bookmark_detail
-
-                }
-                , {}, {})
+        if (illustDetailResponse.value != null)
+            retrofitRespository
+                .getBookmarkDetail(illustDetailResponse.value!!.illust.id)
+                .subscribe(
+                    { tags.value = it.bookmark_detail }
+                    , {}, {}).add()
+        else {
+            val a = illustDetailResponse.value
+            print(a)
+        }
     }
 
-    fun onDialogClick(arrayList: ArrayList<String>, boolean: Boolean, toLong: Long) {
+    fun onDialogClick(boolean: Boolean) {
+        val toLong = illustDetailResponse.value!!.illust.id
+        val arrayList = ArrayList<String>()
+        for (i in tags.value!!.tags) {
+            if (i.isIs_registered) {
+                arrayList.add(i.name)
+            }
+        }
         if (!illustDetailResponse.value!!.illust.is_bookmarked) {
             var string = "public"
             if (!boolean) {
@@ -208,18 +242,18 @@ class PictureXViewModel : BaseViewModel() {
             } else {
                 string = "private"
             }
-            val postbookmark = retrofitRespository.postLikeIllustWithTags(toLong, string, arrayList)
-            postbookmark!!.subscribe({
+            val postbookmark =
+                retrofitRespository.postLikeIllustWithTags(toLong, string, arrayList).subscribe({
                 likeIllust.value = true
                 illustDetailResponse.value!!.illust.is_bookmarked = true
-            }, {}, {})
+                }, {}, {}).add()
 
         } else {
-            val postbookmark = retrofitRespository.postUnlikeIllust(toLong.toLong())
-            postbookmark!!.subscribe({
-                likeIllust.value = false
-                illustDetailResponse.value!!.illust.is_bookmarked = false
-            }, {}, {})
+            retrofitRespository.postUnlikeIllust(toLong.toLong())
+                .subscribe({
+                    likeIllust.value = false
+                    illustDetailResponse.value!!.illust.is_bookmarked = false
+                }, {}, {}).add()
         }
     }
 
@@ -229,14 +263,16 @@ class PictureXViewModel : BaseViewModel() {
             retrofitRespository.postfollowUser(id, "public").subscribe({
                 followUser.value = true
                 illustDetailResponse.value!!.illust.user.is_followed = true
-            }, {}, {})
+            }, {}, {}).add()
         } else {
             retrofitRespository.postunfollowUser(id).subscribe({
                 followUser.value = false
                 illustDetailResponse.value!!.illust.user.is_followed = false
             }, {}, {}
-            )
+            ).add()
         }
     }
 
 }
+
+data class ProgressInfo(var now: Long, var all: Long)

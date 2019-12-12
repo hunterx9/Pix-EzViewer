@@ -116,7 +116,6 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
     }
 
     init {
-
         when (PreferenceManager.getDefaultSharedPreferences(mContext).getString("quality", "0")?.toInt()
                 ?: 0) {
             0 -> {
@@ -155,9 +154,9 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
         private var sharedPreferencesServices: SharedPreferencesServices? = null
         private val tagFlowLayout = itemView.findViewById<TagFlowLayout>(R.id.tagflowlayout)
         private val captionTextView = itemView.findViewById<TextView>(R.id.textview_caption)
+        private val btnTranslate = itemView.findViewById<TextView>(R.id.btn_translate)
         private val viewCommentTextView = itemView.findViewById<TextView>(R.id.textview_viewcomment)
         private val imageView = itemView.findViewById<NiceImageView>(R.id.imageView5)
-        private val btnTranslate = itemView.findViewById<TextView>(R.id.btn_translate)
         private val imageButtonDownload = itemView.findViewById<ImageButton>(R.id.imagebutton_download)
         fun updateWithPage(mContext: Context, s: Illust, mViewCommentListen: () -> Unit, mUserPicLongClick: () -> Unit) {
             binding.illust = s
@@ -182,43 +181,49 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
                 intent.putExtra("data", s.user.id)
                 mContext.startActivity(intent)
             }
-            btnTranslate.setOnClickListener {
-                val intent = Intent()
-                    .setType("text/plain")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    intent.setAction(Intent.ACTION_PROCESS_TEXT)
-                    intent.putExtra(Intent.EXTRA_PROCESS_TEXT, s.caption)
-                } else {
-                    intent.setAction(Intent.ACTION_SEND)
-                    intent.putExtra(Intent.EXTRA_TEXT, s.caption)
-                }
-
-                for (resolveInfo: ResolveInfo in mContext.getPackageManager().queryIntentActivities(
-                    intent,
-                    0
-                )) {
-                    if (resolveInfo.activityInfo.packageName.contains("com.google.android.apps.translate")) {
-                        intent.component = ComponentName(
-                            resolveInfo.activityInfo.packageName,
-                            resolveInfo.activityInfo.name
-                        )
-                        mContext.startActivity(intent)
-                    }
-
-                }
-//                intent.component = ComponentName(
-//                    "com.google.android.apps.translate",
-//                    "com.google.android.apps.translate.TranslateActivity"
-//                )
-//
-//                mContext.startActivity(intent)
-            }
             if (s.caption.isNotBlank())
                 binding.html = Html.fromHtml(s.caption)
             else
                 binding.html = Html.fromHtml("~")
             viewCommentTextView.setOnClickListener {
                 mViewCommentListen.invoke()
+            }
+
+            //google translate app btn click listener
+            val intent = Intent()
+                .setType("text/plain")
+            var componentPackageName = ""
+            var componentName = ""
+            var isGoogleTranslateEnabled = false
+            for (resolveInfo: ResolveInfo in mContext.getPackageManager().queryIntentActivities(
+                intent,
+                0
+            )) {
+                if (resolveInfo.activityInfo.packageName.contains("com.google.android.apps.translate")) {
+                    isGoogleTranslateEnabled = true
+                    componentPackageName = resolveInfo.activityInfo.packageName
+                    componentName = resolveInfo.activityInfo.name
+                }
+
+            }
+            if (!isGoogleTranslateEnabled) btnTranslate.visibility = View.GONE
+            else {
+                btnTranslate.setOnClickListener {
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        intent.setAction(Intent.ACTION_PROCESS_TEXT)
+                        intent.putExtra(Intent.EXTRA_PROCESS_TEXT, s.caption)
+                    } else {
+                        intent.setAction(Intent.ACTION_SEND)
+                        intent.putExtra(Intent.EXTRA_TEXT, s.caption)
+                    }
+                    intent.component = ComponentName(
+                        componentPackageName,
+                        componentName
+                    )
+                    mContext.startActivity(intent)
+
+                }
             }
 
             tagFlowLayout.apply {
@@ -242,7 +247,6 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
                 }
                 setOnTagClickListener { view, position, parent ->
                     val bundle = Bundle()
-
                     bundle.putString("searchword", s.tags[position].name)
 //                    bundle.putString("searchword", s.tags[position].name+ " R-18")
                     /* when clicked tag add it on the search history*/
@@ -531,11 +535,11 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
             }
             play!!.setOnClickListener {
                 play.visibility = View.GONE
-//                Toasty.info(PxEZApp.instance, "Downloading...", Toast.LENGTH_SHORT).show()
-                pictureXViewModel.loadgif(data.id).flatMap {
+                Toasty.info(PxEZApp.instance, "Downloading...", Toast.LENGTH_SHORT).show()
+                pictureXViewModel.loadGif(data.id).flatMap {
                     duration = it.ugoira_metadata.frames[0].delay
 
-                    pictureXViewModel.downloadzip(it.ugoira_metadata.zip_urls.medium)
+                    pictureXViewModel.downloadZip(it.ugoira_metadata.zip_urls.medium)
                     return@flatMap Observable.just(it)
                 }.subscribe({
                 }, {
@@ -670,9 +674,5 @@ class PictureXAdapter(val pictureXViewModel: PictureXViewModel, private val data
     fun setProgressComplete(it: Boolean) {
         progressBar?.visibility = View.GONE
         createAnimationFrame(data, imageViewGif!!, duration)
-    }
-
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-        super.onViewDetachedFromWindow(holder)
     }
 }

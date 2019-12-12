@@ -56,7 +56,7 @@ class IntentActivity : RinkActivity() {
                 }
                 return
             }
-            if (segment.size > 2) {
+            if (segment.size == 2) {
                 if (segment[segment.size - 2] == "u") {
                     val id = segment[segment.size - 1].toLong()
                     try {
@@ -64,6 +64,24 @@ class IntentActivity : RinkActivity() {
                         intent1.putExtra("data", id)
                         startActivity(intent1)
                         finish()
+                        return
+                    } catch (e: Exception) {
+                        Toasty.error(this, "wrong id")
+                    }
+                }
+                if (segment[segment.size - 2] == "i") {
+                    val id = segment[segment.size - 1].toLong()
+                    val bundle = Bundle()
+                    val arrayList = LongArray(1)
+                    try {
+                        arrayList[0] = id
+                        bundle.putLongArray("illustlist", arrayList)
+                        bundle.putLong("illustid", id)
+                        val intent2 = Intent(this, PictureActivity::class.java)
+                        intent2.putExtras(bundle)
+                        startActivity(intent2)
+                        finish()
+                        return
                     } catch (e: Exception) {
                         Toasty.error(this, "wrong id")
                     }
@@ -89,8 +107,8 @@ class IntentActivity : RinkActivity() {
 
             }
             var id = uri.getQueryParameter("id")
-            if (uri.encodedSchemeSpecificPart.contains("//www.pixiv.net/fanbox/creator/")) {
-                id = uri.encodedSchemeSpecificPart.replace("//www.pixiv.net/fanbox/creator/", "")
+            if (uri.encodedSchemeSpecificPart.contains("/fanbox/creator/")) {
+                id = uri.pathSegments[uri.pathSegments.size - 1]
             }
             if (id != null) {
 
