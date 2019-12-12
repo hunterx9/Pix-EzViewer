@@ -30,6 +30,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -39,6 +40,8 @@ import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.RecommendAdapter
 import com.perol.asdpl.pixivez.dialog.TagsShowDialog
 import com.perol.asdpl.pixivez.objects.LazyV4Fragment
+import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.viewmodel.UserBookMarkViewModel
 import kotlinx.android.synthetic.main.fragment_user_book_mark.*
 
@@ -61,15 +64,21 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
             if (it) {
                 val view = layoutInflater.inflate(R.layout.header_bookmark, null)
                 val imagebutton = view.findViewById<ImageView>(R.id.imagebutton_showtags)
+                val image_button_download = view.findViewById<ImageView>(R.id.imagebutton_download)
                 recommendAdapter.addHeaderView(view)
                 imagebutton.setOnClickListener {
                     showtagdialog()
+                }
+                image_button_download.setOnClickListener {
+
+                    showDownloadDialog()
                 }
             }
         }.doOnError {
 
         }.subscribe()
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -94,6 +103,7 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
     }
 
     fun lazyLoad() {
+        illusts = ArrayList<Illust>()
         viewmodel = ViewModelProviders.of(this).get(UserBookMarkViewModel::class.java)
         viewmodel!!.nexturl.observe(this, Observer {
             if (it.isNullOrEmpty()) {
@@ -106,7 +116,8 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
             if (it != null) {
                 mrefreshlayout.isRefreshing = false
                 recommendAdapter.setNewData(it)
-
+                illusts.clear()
+                illusts.addAll(recommendAdapter.data)
             }
 
         })
@@ -114,6 +125,8 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
             if (it != null) {
                 recommendAdapter.addData(it)
                 recommendAdapter.loadMoreComplete()
+                illusts.clear()
+                illusts.addAll(recommendAdapter.data)
             }
         })
         viewmodel!!.tags.observe(this, Observer {
@@ -123,6 +136,7 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
     }
 
 
+    private lateinit var illusts: java.util.ArrayList<Illust>
     var first = true
 
     // TODO: Rename and change types of parameters
@@ -143,6 +157,15 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
 
     var viewmodel: UserBookMarkViewModel? = null
 
+
+    private fun showDownloadDialog() {
+        Toast.makeText(
+            context,
+            "Downloading ${illusts.size} images from user bookmarks",
+            Toast.LENGTH_SHORT
+        ).show()
+        Works.imagesUserBookmarkAll(illusts)
+    }
 
     fun showtagdialog() {
         val arrayList = ArrayList<String>()

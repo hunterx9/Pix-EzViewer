@@ -29,7 +29,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -96,13 +95,6 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val isR18all =
-            PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean("r18all", false)
-        if (isR18all)
-            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        else
-            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         val searchtext = activity!!.findViewById<TextView>(R.id.searchtext)
         searchIllustAdapter = RecommendAdapter(
             R.layout.view_recommand_item,
@@ -245,68 +237,118 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
     private fun filterIllust(it:java.util.ArrayList<Illust>): ArrayList<Illust> {
         var filteredIllusts: List<Illust>
 
-        val isR18all =
-            PreferenceManager.getDefaultSharedPreferences(context).getBoolean("r18all", false)
-            val isR18no =
-                PreferenceManager.getDefaultSharedPreferences(context).getBoolean("r18no", false)
-            if (isR18all) {
-                filteredIllusts = it
-                    .filter { it.tags.all { tag -> tag.translated_name != "shota" } }
-                    .filter { it.tags.all { tag -> tag.name != "shota" } }
-                    .filter { it.tags.all { tag -> tag.name != "yaoi" } }
-                    .filter { it.tags.all { tag -> tag.translated_name != "yaoi" } }
-                    .filter { it.tags.all { tag -> tag.translated_name != "BL" } }
-                    .filter { it.tags.all { tag -> tag.name != "腐向け" } }
-                    .filter { it.tags.all { tag -> tag.name != "やおい" } }
-                    .filter { it.tags.all { tag -> tag.name != "腐" } }
-                    .filter { it.tags.all { tag -> tag.name != "ホモ" } }
-                    .filter { it.tags.all { tag -> tag.name != "ふたなり" } }
-                    .filter { it.tags.all { tag -> tag.translated_name != "futanari" } }
-                    .filter { it.tags.all { tag -> tag.name != "futanari" } }
-                    .filter { it.tags.all { tag -> tag.translated_name != "gay" } }
-                    .filter { it.tags.all { tag -> tag.name != "gay" } }
-                    .filter { it.tags.all { tag -> tag.name != "ゲイ" } }
-                    .filter { it.tags.all { tag -> tag.name != "ケモノ" } }
-                    .filter { it.tags.all { tag -> tag.name != "獸人" } }
-                    .filter { it.tags.all { tag -> tag.name != "furry" } }
-                    .filter { it.tags.all { tag -> tag.translated_name != "femboy" } }
-                    .filter { it.tags.all { tag -> !tag.name.contains("【腐】") } }
-                    .filter { it.tags.get(0).name.equals("R-18") }
-            } else if (isR18no) {
-                filteredIllusts = it
-                    .filter { it.tags.all { tag -> tag.translated_name != "shota" } }
-                    .filter { it.tags.all { tag -> tag.name != "shota" } }
-                    .filter { it.tags.all { tag -> tag.name != "yaoi" } }
-                    .filter { it.tags.all { tag -> tag.translated_name != "yaoi" } }
-                    .filter { it.tags.all { tag -> tag.translated_name != "BL" } }
-                    .filter { it.tags.all { tag -> tag.name != "腐向け" } }
-                    .filter { it.tags.all { tag -> tag.name != "やおい" } }
-                    .filter { it.tags.all { tag -> tag.name != "腐" } }
-                    .filter { it.tags.all { tag -> tag.name != "ホモ" } }
-                    .filter { it.tags.all { tag -> tag.name != "ふたなり" } }
-                    .filter { it.tags.all { tag -> tag.translated_name != "futanari" } }
-                    .filter { it.tags.all { tag -> tag.name != "futanari" } }
-                    .filter { it.tags.all { tag -> tag.translated_name != "gay" } }
-                    .filter { it.tags.all { tag -> tag.name != "gay" } }
-                    .filter { it.tags.all { tag -> tag.name != "ゲイ" } }
-                    .filter { it.tags.all { tag -> tag.name != "ケモノ" } }
-                    .filter { it.tags.all { tag -> tag.name != "獸人" } }
-                    .filter { it.tags.all { tag -> tag.name != "furry" } }
-                    .filter { it.tags.all { tag -> tag.translated_name != "femboy" } }
-                    .filter { it.tags.all { tag -> !tag.name.contains("【腐】") } }
-                    .filter { !it.tags.get(0).name.equals("R-18") }
+        if (PxEZApp.contro_topic) {
+
+            filteredIllusts = if (PxEZApp.r18no) {
+                filterControversialIllusts(it, true)
             } else {
-                filteredIllusts = it
+                filterControversialIllusts(it, false)
             }
+        } else if (PxEZApp.cont_topic) {
+            filteredIllusts = if (PxEZApp.r18no) {
+                filterContentiousIllusts(it, true)
+            } else {
+                filterContentiousIllusts(it, false)
+            }
+
+        } else if (PxEZApp.r18no) {
+            filteredIllusts = it
+                .filter { it.tags.all { tag -> tag.name != "R-18" } }
+        } else if (PxEZApp.r18only) {
+            filteredIllusts = it.filter { it.tags.get(0).name != "R-18" }
+        } else
+            filteredIllusts = it
 
 
         val illust = arrayListOf<Illust>()
-
-
         illust.addAll(filteredIllusts)
 
         return illust
     }
+
+    private fun filterContentiousIllusts(
+        it: java.util.ArrayList<Illust>,
+        safeMode: Boolean
+    ): List<Illust> {
+
+        if (safeMode)
+            return it
+                .asSequence()
+                .filter { it.tags.all { tag -> tag.name != "shota" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "shota" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "loli" } }
+                .filter { it.tags.all { tag -> tag.name != "loli" } }
+                .filter { it.tags.all { tag -> tag.name != "JS" } }
+                .filter { it.tags.all { tag -> tag.name != "R-18" } }
+                .toList()
+        else {
+            return it
+                .asSequence()
+                .filter { it.tags.all { tag -> tag.name != "shota" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "shota" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "loli" } }
+                .filter { it.tags.all { tag -> tag.name != "loli" } }
+                .filter { it.tags.all { tag -> tag.name != "JS" } }
+                .toList()
+        }
+    }
+
+    private fun filterControversialIllusts(
+        it: java.util.ArrayList<Illust>,
+        safeMode: Boolean
+    ): List<Illust> {
+        if (safeMode)
+            return it
+                .asSequence()
+                .filter { it.tags.all { tag -> tag.name != "shota" } }
+                .filter { it.tags.all { tag -> tag.name != "yaoi" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "yaoi" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "BL" } }
+                .filter { it.tags.all { tag -> tag.name != "腐向け" } }
+                .filter { it.tags.all { tag -> tag.name != "やおい" } }
+                .filter { it.tags.all { tag -> tag.name != "腐" } }
+                .filter { it.tags.all { tag -> tag.name != "ホモ" } }
+                .filter { it.tags.all { tag -> tag.name != "ふたなり" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "futanari" } }
+                .filter { it.tags.all { tag -> tag.name != "futanari" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "gay" } }
+                .filter { it.tags.all { tag -> tag.name != "gay" } }
+                .filter { it.tags.all { tag -> tag.name != "ゲイ" } }
+                .filter { it.tags.all { tag -> tag.name != "ケモノ" } }
+                .filter { it.tags.all { tag -> tag.name != "獸人" } }
+                .filter { it.tags.all { tag -> tag.name != "furry" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "femboy" } }
+                .filter { it.tags.all { tag -> !tag.name.contains("【腐】") } }
+//                .filter { it.tags.all { tag -> !tag.translated_name?.contains("BL fanwork")!! } }
+                .filter { it.tags.all { tag -> tag.name != "R-18" } }
+                .toList()
+        else {
+            return it
+                .asSequence()
+                .filter { it.tags.all { tag -> tag.name != "shota" } }
+                .filter { it.tags.all { tag -> tag.name != "yaoi" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "yaoi" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "BL" } }
+                .filter { it.tags.all { tag -> tag.name != "腐向け" } }
+                .filter { it.tags.all { tag -> tag.name != "やおい" } }
+                .filter { it.tags.all { tag -> tag.name != "腐" } }
+                .filter { it.tags.all { tag -> tag.name != "ホモ" } }
+                .filter { it.tags.all { tag -> tag.name != "ふたなり" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "futanari" } }
+                .filter { it.tags.all { tag -> tag.name != "futanari" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "gay" } }
+                .filter { it.tags.all { tag -> tag.name != "gay" } }
+                .filter { it.tags.all { tag -> tag.name != "ゲイ" } }
+                .filter { it.tags.all { tag -> tag.name != "ケモノ" } }
+                .filter { it.tags.all { tag -> tag.name != "獸人" } }
+                .filter { it.tags.all { tag -> tag.name != "furry" } }
+                .filter { it.tags.all { tag -> tag.translated_name != "femboy" } }
+                .filter { it.tags.all { tag -> !tag.name.contains("【腐】") } }
+//                .filter { it.tags.all { tag -> !tag.translated_name?.contains("BL fanwork")!! } }
+                .toList()
+        }
+    }
+
 
     private fun addIllust(it: java.util.ArrayList<Illust>) {
         searchIllustAdapter.addData(it)

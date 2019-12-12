@@ -40,18 +40,6 @@
             app:title="@string/_18" />
 
         <SwitchPreference
-            android:summaryOn="R-18 on every search and user profile search too"
-            app:defaultValue="false"
-            app:key="r18all"
-            app:summaryOff="Normal on every search and user profile search too"
-            app:title="@string/_18all" />
-        <SwitchPreference
-            android:summaryOn="Safe mode on every search and user profile search too"
-            app:defaultValue="false"
-            app:key="r18no"
-            app:summaryOff="Normal mode"
-            app:title="@string/_18no" />
-        <SwitchPreference
             app:key="disableproxy"
             app:title="@string/proxy" />
         <SwitchPreference
@@ -76,14 +64,64 @@
             app:key="viewreport"
             android:title="@string/viewreport"/>
     </PreferenceCategory>
+    <PreferenceCategory android:title="Filter results">
+        <SwitchPreference
+            android:summaryOn="R-18 on every search and user profile search too"
+            app:defaultValue="false"
+            app:key="r18all"
+            app:summaryOff="Normal on every search and user profile search too"
+            app:title="@string/_18all" />
+        <SwitchPreference
+            android:summaryOn="Safe mode on every search and user profile search too"
+            app:defaultValue="false"
+            app:key="r18no"
+            app:summaryOff="Normal on every search and user profile search too"
+            app:title="@string/_18no" />
+
+        <SwitchPreference
+            android:summaryOn="Filter out contentious content(loli,shota)"
+            app:defaultValue="false"
+            app:key="contentious_content"
+            app:summaryOff="Normal mode"
+            app:title="@string/_cont_content" />
+
+        <SwitchPreference
+            android:summaryOn="Filter out controversial content(futa, yuri, loli,shota)"
+            app:defaultValue="false"
+            app:key="controversial_content"
+            app:summaryOff="Normal mode"
+            app:title="@string/_contro_content" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Privacy">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:summaryOff="App preview in Recent Apps enabled"
+            android:summaryOn="App preview on Recent Apps. Enable if you need to take a screenshot"
+            android:title="App preview on Recent Apps"
+            app:key="privacy" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:summaryOff="App Lock"
+            android:summaryOn="Under development"
+            android:title="App Lock"
+            app:key="app_lock" />
+
+    </PreferenceCategory>
     <PreferenceCategory app:title="Selection">
+        <DropDownPreference
+            android:entries="@array/search_list_type"
+            android:entryValues="@array/search_list_value"
+            app:defaultValue="30"
+            app:key="search_format"
+            app:title="Search Format" />
         <Preference
             app:key="storepath1"
             app:title="@string/savepath" />
         <DropDownPreference
             android:entries="@array/format"
             android:entryValues="@array/format_value"
-            app:defaultValue="0"
+            app:defaultValue="30"
             app:key="saveformat"
             app:title="@string/saveformat"
             app:useSimpleSummaryProvider="true" />

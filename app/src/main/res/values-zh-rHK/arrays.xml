@@ -31,6 +31,7 @@
         <item>血書:userid_id_part</item>
         <item>特殊:id_title_part</item>
     </string-array>
+
     <string-array name="quality">
         <item>中圖（更快）</item>
         <item>大圖（高配）</item>
@@ -66,5 +67,15 @@
         <item>關閉</item>
         <item>開啟</item>
         <item>跟隨電池</item>
+    </string-array>
+
+    <string-array name="search_list_type">
+        <item>30</item>
+        <item>60</item>
+    </string-array>
+
+    <string-array name="search_list_value">
+        <item>30</item>
+        <item>60</item>
     </string-array>
 </resources>

@@ -140,19 +140,70 @@ class SettingFragment : PreferenceFragmentCompat(), IconDialog.Callback {
         }
 
         findPreference<SwitchPreference>("r18on")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Toasty.normal(PxEZApp.instance, "Done", Toast.LENGTH_SHORT).show()
+            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+                .setAction(R.string.restart_now) {
+                    PxEZApp.ActivityCollector.recreate()
+                }
+                .show()
             true
         }
         findPreference<SwitchPreference>("r18all")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Toasty.normal(PxEZApp.instance, "Restart for full effect", Toast.LENGTH_SHORT)
+            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+                .setAction(R.string.restart_now) {
+                    PxEZApp.r18only = newValue as Boolean
+                    PxEZApp.ActivityCollector.recreate()
+                }
                 .show()
             true
         }
         findPreference<SwitchPreference>("r18no")!!.setOnPreferenceChangeListener { preference, newValue ->
-            Toasty.normal(PxEZApp.instance, "Done", Toast.LENGTH_SHORT)
+            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+                .setAction(R.string.restart_now) {
+                    PxEZApp.r18no = newValue as Boolean
+                    PxEZApp.ActivityCollector.recreate()
+                }
                 .show()
             true
         }
+
+        findPreference<SwitchPreference>("contentious_content")!!.setOnPreferenceChangeListener { preference, newValue ->
+            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+                .setAction(R.string.restart_now) {
+                    PxEZApp.cont_topic = newValue as Boolean
+                    PxEZApp.ActivityCollector.recreate()
+                }
+                .show()
+            true
+        }
+
+        findPreference<SwitchPreference>("controversial_content")!!.setOnPreferenceChangeListener { preference, newValue ->
+            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+                .setAction(R.string.restart_now) {
+                    PxEZApp.contro_topic = newValue as Boolean
+                    PxEZApp.ActivityCollector.recreate()
+                }
+                .show()
+            true
+        }
+        findPreference<SwitchPreference>("privacy")!!.setOnPreferenceChangeListener { preference, newValue ->
+            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+                .setAction(R.string.restart_now) {
+                    PxEZApp.privacy = newValue as Boolean
+                    PxEZApp.ActivityCollector.recreate()
+                }
+                .show()
+            true
+        }
+        findPreference<DropDownPreference>("search_format")!!.setOnPreferenceChangeListener { preference, newValue ->
+            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+                .setAction(R.string.restart_now) {
+                    PxEZApp.searchMode = Integer.parseInt(newValue as String)
+                    PxEZApp.ActivityCollector.recreate()
+                }
+                .show()
+            true
+        }
+
         findPreference<SwitchPreference>("animation")!!.setOnPreferenceChangeListener { preference, newValue ->
             PxEZApp.animationEnable = newValue as Boolean
             true

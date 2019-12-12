@@ -47,7 +47,13 @@ class PxEZApp : Application() {
         Logger.addLogAdapter(AndroidLogAdapter())
         val defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         AppCompatDelegate.setDefaultNightMode(defaultSharedPreferences.getString("dark_mode", "-1")!!.toInt())
-        animationEnable = defaultSharedPreferences.getBoolean("animation", true)
+        r18only = defaultSharedPreferences.getBoolean("r18all", true)
+        r18no = defaultSharedPreferences.getBoolean("r18no", true)
+        cont_topic = defaultSharedPreferences.getBoolean("contentious_content", true)
+        contro_topic = defaultSharedPreferences.getBoolean("controversial_content", true)
+        privacy = defaultSharedPreferences.getBoolean("privacy", true)
+        searchMode = defaultSharedPreferences.getString("search_format", "30")!!.toInt()
+
         language = defaultSharedPreferences.getString("language", "0")?.toInt() ?: 0
         storepath = defaultSharedPreferences.getString("storepath1", Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz")
                 ?: Environment.getExternalStorageDirectory().absolutePath + File.separator + "PxEz"
@@ -126,6 +132,18 @@ class PxEZApp : Application() {
         var language: Int = 0
         @JvmStatic
         var animationEnable: Boolean = false
+        @JvmStatic
+        var privacy: Boolean = false
+        @JvmStatic
+        var contro_topic: Boolean = false
+        @JvmStatic
+        var cont_topic: Boolean = false
+        @JvmStatic
+        var r18only: Boolean = false
+        @JvmStatic
+        var r18no: Boolean = false
+        @JvmStatic
+        var searchMode: Int = 30
         lateinit var instance: PxEZApp
         var autochecked = false
 

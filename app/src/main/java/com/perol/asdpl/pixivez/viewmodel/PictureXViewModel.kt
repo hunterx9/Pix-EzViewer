@@ -176,22 +176,27 @@ class PictureXViewModel : BaseViewModel() {
 
             aboutPics.value = it.illusts as ArrayList<Illust>?
             newRec.addAll(it.illusts as ArrayList<Illust>)
-            disposables.add(
-                retrofitRespository.getIllustRecommendedNext(
-                    long,
-                    30
-                ).subscribe({ nextIt: RecommendResponse ->
-                newRec.addAll(nextIt.illusts as ArrayList<Illust>)
-                    disposables.add(
-                        retrofitRespository.getIllustRecommendedNext(
-                            long,
-                            60
-                        ).subscribe({ nextIt2: RecommendResponse ->
-                    newRec.addAll(nextIt2.illusts as ArrayList<Illust>)
-                    aboutPics.value = newRec
-                }, {}, {}))
+            if (PxEZApp.searchMode == 60) {
 
-            }, {}, {}))
+                disposables.add(
+                    retrofitRespository.getIllustRecommendedNext(
+                        long,
+                        30
+                    ).subscribe({ nextIt: RecommendResponse ->
+                        newRec.addAll(nextIt.illusts as ArrayList<Illust>)
+                        disposables.add(
+                            retrofitRespository.getIllustRecommendedNext(
+                                long,
+                                60
+                            ).subscribe({ nextIt2: RecommendResponse ->
+                                newRec.addAll(nextIt2.illusts as ArrayList<Illust>)
+                                aboutPics.value = newRec
+                            }, {}, {})
+                        )
+
+                    }, {}, {})
+                )
+            }
         }, {}, {}))
     }
 

@@ -27,9 +27,7 @@ package com.perol.asdpl.pixivez.activity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowManager
 import android.widget.AdapterView
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
@@ -69,13 +67,6 @@ class UserFollowActivity : RinkActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.themeInit(this)
-        val isR18all =
-            PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                .getBoolean("r18all", false)
-        if (isR18all)
-            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        else
-            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         setContentView(R.layout.activity_user_follow)
         bundle = this.intent.extras
         userid = bundle!!.getLong("user")

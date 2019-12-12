@@ -25,7 +25,9 @@
 package com.perol.asdpl.pixivez.activity
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.PreferenceManager
 import com.perol.asdpl.pixivez.objects.LanguageUtil
 import com.perol.asdpl.pixivez.services.PxEZApp
 
@@ -34,6 +36,13 @@ abstract class RinkActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LanguageUtil.setLanguage(this, PxEZApp.language)
+        val privacy_mode =
+            PreferenceManager.getDefaultSharedPreferences(applicationContext)
+                .getBoolean("privacy", false)
+        if (privacy_mode)
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        else
+            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
     }
 }
 

@@ -27,6 +27,7 @@ package com.perol.asdpl.pixivez.viewmodel
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.repository.RetrofitRespository
 import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.services.PxEZApp
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -84,19 +85,22 @@ class IllustfragmentViewModel : BaseViewModel() {
                 illusts.value = ArrayList<Illust>(it.illusts)
                 nexturl.value = it.next_url
                 isRefresh.value = false
-                if (nexturl.value != null) {
-                    retrofitRespository.getNext(nexturl.value!!).subscribe({
-                        addIllusts.value = ArrayList<Illust>(it.illusts)
-                        nexturl.value = it.next_url
+                if (PxEZApp.searchMode == 60) {
+                    if (nexturl.value != null) {
+                        retrofitRespository.getNext(nexturl.value!!).subscribe({
+                            addIllusts.value = ArrayList<Illust>(it.illusts)
+                            nexturl.value = it.next_url
 
-                        if (nexturl.value != null) {
-                            retrofitRespository.getNext(nexturl.value!!).subscribe({
-                                addIllusts.value = ArrayList<Illust>(it.illusts)
-                                nexturl.value = it.next_url
-                            }, {}, {}).add()
-                        }
-                    }, {}, {}).add()
+                            if (nexturl.value != null) {
+                                retrofitRespository.getNext(nexturl.value!!).subscribe({
+                                    addIllusts.value = ArrayList<Illust>(it.illusts)
+                                    nexturl.value = it.next_url
+                                }, {}, {}).add()
+                            }
+                        }, {}, {}).add()
+                    }
                 }
+
             }, {
                 it.printStackTrace()
             }, {}).add()
@@ -107,15 +111,17 @@ class IllustfragmentViewModel : BaseViewModel() {
             retrofitRespository.getNext(nexturl.value!!).subscribe({
                 addIllusts.value = ArrayList<Illust>(it.illusts)
                 nexturl.value = it.next_url
+                if (PxEZApp.searchMode == 60) {
 
-                if (nexturl.value != null) {
-                    retrofitRespository.getNext(nexturl.value!!).subscribe({
-                        val lists = ArrayList<Illust>(it.illusts)
-                        val listss = addIllusts.value
-                        listss!!.addAll(lists)
-                        addIllusts.value = listss
-                        nexturl.value = it.next_url
-                    }, {}, {}).add()
+                    if (nexturl.value != null) {
+                        retrofitRespository.getNext(nexturl.value!!).subscribe({
+                            val lists = ArrayList<Illust>(it.illusts)
+                            val listss = addIllusts.value
+                            listss!!.addAll(lists)
+                            addIllusts.value = listss
+                            nexturl.value = it.next_url
+                        }, {}, {}).add()
+                    }
                 }
             }, {}, {}).add()
         }

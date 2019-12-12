@@ -132,6 +132,8 @@
     <string name="dark_mode">Dark Mode</string>
     <string name="_18all" translatable="false">R-18 only?</string>
     <string name="_18no" translatable="false">Safe mode only?</string>
+    <string name="_cont_content" translatable="false">Filter contentious content?</string>
+    <string name="_contro_content" translatable="false">Filter controversial content?</string>
     <string name="a_year">A Year</string>
     <string name="account_management">Account MGT</string>
     <string name="auto_check_update">Auto check update</string>

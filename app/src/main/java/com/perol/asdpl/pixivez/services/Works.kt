@@ -121,6 +121,19 @@ class Works {
 
         }
 
+        fun imagesUserBookmarkAll(illusts: ArrayList<Illust>) {
+            for (illust: Illust in illusts) {
+                if (illust.meta_pages.isEmpty()) {
+                    imageDownloadOneUser(illust, null)
+                } else {
+                    for (i in illust.meta_pages.indices) {
+                        imageDownloadOneUser(illust, i)
+                    }
+                }
+            }
+
+        }
+
         fun imageDownloadAll(illust: Illust) {
             TToast.startDownload(PxEZApp.instance)
             if (illust.meta_pages.isEmpty()) {
@@ -224,6 +237,112 @@ class Works {
                                 PxEZApp.instance.resources.getString(R.string.savesuccess),
                                 Toast.LENGTH_SHORT
                             ).show()
+                            val uri = workInfo.outputData.getString("path")
+                            if (uri != null)
+                                PxEZApp.instance.sendBroadcast(
+                                    Intent(
+                                        Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                                        Uri.fromFile(File(uri))
+                                    )
+                                )
+                        } else if (workInfo.state == WorkInfo.State.FAILED) {
+
+                        } else if (workInfo.state == WorkInfo.State.CANCELLED) {
+
+                            val file = File(PxEZApp.storepath, filename)
+                            file.deleteOnExit()
+                        }
+                        WorkManager.getInstance(PxEZApp.instance)
+                            .getWorkInfoByIdLiveData(oneTimeWorkRequest.id).removeObserver(this)
+                    }
+                })
+        }
+
+
+        fun imageDownloadOneUser(illust: Illust, part: Int?) {
+            var url = ""
+            var title = illust.title
+            title = title.replace("/", "")
+            title = title.replace("\\", "")
+            title = title.replace(":", "")
+            val user = illust.user.id
+            val name = illust.id
+            val format = PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).getString(
+                "saveformat",
+                "0"
+            )?.toInt()
+                ?: 0
+            var type = ".png"
+            var filename = "${name}_p$part$type"
+            if (part != null && illust.meta_pages.isNotEmpty()) {
+                url = illust.meta_pages[part].image_urls.original
+                type = if (url.contains("png")) {
+                    ".png"
+                } else ".jpg"
+                when (format) {
+                    0 -> {
+                        filename = "${name}_$part$type"
+                    }
+                    1 -> {
+                        filename = "${name}_p$part$type"
+                    }
+                    2 -> {
+                        filename = "${user}_${name}_$part$type"
+                    }
+                    3 -> {
+                        filename = "${name}_${title}_$part$type"
+                    }
+                }
+            } else {
+                url = illust.meta_single_page.original_image_url!!
+                type = if (url.contains("png")) {
+                    ".png"
+                } else ".jpg"
+                when (format) {
+                    0 -> {
+                        filename = "$name$type"
+                    }
+                    1 -> {
+                        filename = "$name$type"
+                    }
+                    2 -> {
+                        filename = "${user}_$name$type"
+                    }
+                    3 -> {
+                        filename = "${name}_${title}$type"
+                    }
+                }
+            }
+
+            val inputData = workDataOf(
+                "file" to filename,
+                "url" to url,
+                "title" to illust.title,
+                "id" to illust.id
+            )
+            val oneTimeWorkRequest = OneTimeWorkRequestBuilder<ImgDownLoadWorker>()
+                .setInputData(inputData)
+                .addTag("image")
+                .build()
+            WorkManager.getInstance(PxEZApp.instance)
+                .enqueueUniqueWork(url, ExistingWorkPolicy.REPLACE, oneTimeWorkRequest)
+
+
+            WorkManager.getInstance(PxEZApp.instance).getWorkInfoByIdLiveData(oneTimeWorkRequest.id)
+                .observeForever(object : Observer<WorkInfo> {
+                    override fun onChanged(workInfo: WorkInfo?) {
+                        if (workInfo == null) {
+                            return
+                        }
+                        if (workInfo.state == WorkInfo.State.SUCCEEDED) {
+                            if (workInfo.outputData.getBoolean("exist", false)) {
+
+                                WorkManager.getInstance(PxEZApp.instance)
+                                    .getWorkInfoByIdLiveData(oneTimeWorkRequest.id)
+                                    .removeObserver(this)
+                                return
+                            }
+
                             val uri = workInfo.outputData.getString("path")
                             if (uri != null)
                                 PxEZApp.instance.sendBroadcast(

@@ -32,7 +32,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.view.Menu
 import android.view.MenuItem
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -151,13 +150,6 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val isR18all =
-            PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                .getBoolean("r18all", false)
-        if (isR18all)
-            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
-        else
-            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         var allUser = ArrayList<UserEntity>()
         runBlocking {
             allUser = ArrayList(AppDataRepository.getAllUser())

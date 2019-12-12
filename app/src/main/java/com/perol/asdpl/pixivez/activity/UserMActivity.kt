@@ -162,7 +162,7 @@ class UserMActivity : RinkActivity() {
             android.R.id.home -> finishAfterTransition()
             R.id.action_share -> share()
             R.id.action_download -> {
-//                val intent =Intent(this,WorkActivity::class.java)
+//                val intent =Intent(this,Works::class.java)
 //                intent.putExtra("id",id)
 //                startActivity(intent)
             }
