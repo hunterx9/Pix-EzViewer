@@ -151,7 +151,7 @@
     <string name="completemessage">Complete Message</string>
     <string name="logout">Log Out</string>
     <string name="account">Account</string>
-    <string name="account_helper">Pixiv ID or email</string>
+    <string name="account_helper">Pixiv ID或邮箱</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="login_help">Login help</string>
@@ -220,7 +220,7 @@
     <string name="saveselectpic1">Save?</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
-    <string name="mutichoicesave">Select multiple</string>
+    <string name="mutichoicesave">Messages</string>
     <string name="choice">Choice</string>
     <string name="errorgif">The image file seems to be corrupted. Please clear the cache and try again.</string>
     <string name="add">Add</string>
