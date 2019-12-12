@@ -29,6 +29,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -93,6 +94,13 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val isR18all =
+            PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean("r18all", false)
+        if (isR18all)
+            activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        else
+            activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         val searchtext = activity!!.findViewById<TextView>(R.id.searchtext)
         searchIllustAdapter = RecommendAdapter(R.layout.view_recommand_item, ArrayList<Illust>(), PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("r18on", false))
         searchtext.text = param1

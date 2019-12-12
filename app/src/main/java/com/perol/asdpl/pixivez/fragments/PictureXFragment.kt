@@ -212,7 +212,7 @@ class PictureXFragment : Fragment() {
                         taglist,
                         switch!!.isChecked,
                         pictureXViewModel.illustDetailResponse.value!!.illust.id
-                    );
+                    )
                     a.dismiss()
                 }
                 alertBuilder.create().show()
