@@ -36,8 +36,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.adapters.RecommendAdapter
+import com.perol.asdpl.pixivez.adapters.RecommendAdapterV2
 import com.perol.asdpl.pixivez.dialog.TagsShowDialog
 import com.perol.asdpl.pixivez.objects.LazyV4Fragment
 import com.perol.asdpl.pixivez.responses.Illust
@@ -58,7 +59,7 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 
-class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
+class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback, MainInterface {
     override fun loadData() {
         viewmodel!!.first(param1!!, pub).doOnSuccess {
             if (it) {
@@ -66,6 +67,7 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
                 val imagebutton = view.findViewById<ImageView>(R.id.imagebutton_showtags)
                 val image_button_download = view.findViewById<ImageView>(R.id.imagebutton_download)
                 recommendAdapter.addHeaderView(view)
+
                 imagebutton.setOnClickListener {
                     showtagdialog()
                 }
@@ -73,6 +75,29 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
 
                     showDownloadDialog()
                 }
+
+                val fab_selected_btn =
+                    adapterView!!.findViewById<FloatingActionButton>(R.id.downloadSelected)
+                fab_selected_btn_cancel =
+                    adapterView!!.findViewById<FloatingActionButton>(R.id.downloadSelectedCancel)
+                shouldResetRecyclerView = true
+                fab_selected_btn.visibility = View.VISIBLE
+//                fab_selected_btn_cancel!!.visibility = View.VISIBLE
+                fab_selected_btn.setOnClickListener {
+                    shouldResetRecyclerView = true
+                    isMultiSelectOn = false
+                    recommendAdapter.downloadSelectedIllusts()
+                    fab_selected_btn_cancel!!.visibility = View.GONE
+                }
+                fab_selected_btn_cancel!!.setOnClickListener {
+                    recommendAdapter.selectedIds.clear()
+                    recommendAdapter.notifyDataSetChanged()
+
+                    isMultiSelectOn = false
+                    shouldResetRecyclerView = true
+                    fab_selected_btn_cancel!!.visibility = View.GONE
+                }
+
             }
         }.doOnError {
 
@@ -82,6 +107,7 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isMultiSelectOn = false
         mrecyclerview.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         mrecyclerview.adapter = recommendAdapter
         recommendAdapter.setOnLoadMoreListener({
@@ -136,6 +162,10 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
     }
 
 
+    private var fab_selected_btn_cancel: FloatingActionButton? = null
+    private var adapterView: View? = null
+    private var shouldResetRecyclerView: Boolean = false
+
     private lateinit var illusts: java.util.ArrayList<Illust>
     var first = true
 
@@ -189,16 +219,23 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
 
     }
 
-    lateinit var recommendAdapter: RecommendAdapter
+    lateinit var recommendAdapter: RecommendAdapterV2
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        recommendAdapter = RecommendAdapter(R.layout.view_recommand_item, null, PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("r18on", false))
-        return inflater.inflate(R.layout.fragment_user_book_mark, container, false)
+        adapterView = inflater.inflate(R.layout.fragment_user_book_mark, container, false)
+        recommendAdapter = RecommendAdapterV2(
+            R.layout.view_recommand_item,
+            null,
+            PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("r18on", false)
+            , this
+        )
+        return adapterView
     }
 
 
     companion object {
+        var isMultiSelectOn = false
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -217,4 +254,19 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback {
                     }
                 }
     }
+
+
+    override fun mainInterface(size: Int, index: Int) {
+        Toast.makeText(context, "Size: $size", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onLongPress(isPressed: Boolean) {
+        fab_selected_btn_cancel!!.visibility = View.VISIBLE
+    }
+
+}
+
+interface MainInterface {
+    fun mainInterface(size: Int, index: Int)
+    fun onLongPress(isPressed: Boolean)
 }

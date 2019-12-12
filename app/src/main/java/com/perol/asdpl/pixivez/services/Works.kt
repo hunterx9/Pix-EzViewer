@@ -122,6 +122,12 @@ class Works {
         }
 
         fun imagesUserBookmarkAll(illusts: ArrayList<Illust>) {
+            Toasty.info(
+                PxEZApp.instance,
+                "Downloading ${illusts.size} illustrations",
+                Toast.LENGTH_LONG
+            )
+                .show()
             var i = 0
             for (illust: Illust in illusts) {
                 if (illust.meta_pages.isEmpty()) {
