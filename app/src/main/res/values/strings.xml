@@ -221,4 +221,5 @@
     <string name="sync_title">Sync email periodically</string>
     <string name="sync_header">Sync</string>
     <string name="supporttitle">Support</string>
+    <string name="summary">Summary</string>
 </resources>
