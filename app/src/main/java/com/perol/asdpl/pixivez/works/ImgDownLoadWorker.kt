@@ -48,6 +48,7 @@ class ImgDownLoadWorker(var appContext: Context, workerParams: WorkerParameters)
         val url = inputData.getString("url")!!
         val fileName = inputData.getString("file")!!
         val title = inputData.getString("title")!!
+        val hasMetaPages = inputData.getBoolean("hasMetaPages", false)
         val id = inputData.getLong("id", 0L)
         val appDir = File(PxEZApp.storepath)
         val lastUpdate = workDataOf(
@@ -62,8 +63,18 @@ class ImgDownLoadWorker(var appContext: Context, workerParams: WorkerParameters)
         if (!appDir.exists()) {
             appDir.mkdirs()
         }
-        val file = File(appDir, fileName)
-        if (file.exists()) {
+        var file: File?
+        if (hasMetaPages) {
+            val directory = File(appDir, title)
+            if (!directory.exists()) {
+                directory.mkdirs()
+            }
+            file = File(directory, fileName)
+        } else {
+            file = File(appDir, fileName)
+        }
+
+        if (file!!.exists()) {
             val outputData = workDataOf("exist" to true)
             return Result.success(outputData)
         }

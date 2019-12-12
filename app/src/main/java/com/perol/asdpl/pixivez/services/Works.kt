@@ -122,6 +122,7 @@ class Works {
         }
 
         fun imagesUserBookmarkAll(illusts: ArrayList<Illust>) {
+            var i = 0
             for (illust: Illust in illusts) {
                 if (illust.meta_pages.isEmpty()) {
                     imageDownloadOneUser(illust, null)
@@ -130,6 +131,8 @@ class Works {
                         imageDownloadOneUser(illust, i)
                     }
                 }
+                i++
+                if (i > 10) break
             }
 
         }
@@ -273,8 +276,10 @@ class Works {
             )?.toInt()
                 ?: 0
             var type = ".png"
+            var hasMetaPages: Boolean
             var filename = "${name}_p$part$type"
             if (part != null && illust.meta_pages.isNotEmpty()) {
+                hasMetaPages = true
                 url = illust.meta_pages[part].image_urls.original
                 type = if (url.contains("png")) {
                     ".png"
@@ -294,6 +299,7 @@ class Works {
                     }
                 }
             } else {
+                hasMetaPages = false
                 url = illust.meta_single_page.original_image_url!!
                 type = if (url.contains("png")) {
                     ".png"
@@ -318,7 +324,8 @@ class Works {
                 "file" to filename,
                 "url" to url,
                 "title" to illust.title,
-                "id" to illust.id
+                "id" to illust.id,
+                "hasMetaPages" to hasMetaPages
             )
             val oneTimeWorkRequest = OneTimeWorkRequestBuilder<ImgDownLoadWorker>()
                 .setInputData(inputData)
