@@ -273,23 +273,23 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
 
         if (safeMode)
             return it
-                .asSequence()
+//                .asSequence()
                 .filter { it.tags.all { tag -> tag.name != "shota" } }
                 .filter { it.tags.all { tag -> tag.translated_name != "shota" } }
                 .filter { it.tags.all { tag -> tag.translated_name != "loli" } }
                 .filter { it.tags.all { tag -> tag.name != "loli" } }
                 .filter { it.tags.all { tag -> tag.name != "JS" } }
                 .filter { it.tags.all { tag -> tag.name != "R-18" } }
-                .toList()
+//                .toList()
         else {
             return it
-                .asSequence()
+//                .asSequence()
                 .filter { it.tags.all { tag -> tag.name != "shota" } }
                 .filter { it.tags.all { tag -> tag.translated_name != "shota" } }
                 .filter { it.tags.all { tag -> tag.translated_name != "loli" } }
                 .filter { it.tags.all { tag -> tag.name != "loli" } }
                 .filter { it.tags.all { tag -> tag.name != "JS" } }
-                .toList()
+//                .toList()
         }
     }
 
@@ -299,7 +299,7 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
     ): List<Illust> {
         if (safeMode)
             return it
-                .asSequence()
+//                .asSequence()
                 .filter { it.tags.all { tag -> tag.name != "shota" } }
                 .filter { it.tags.all { tag -> tag.name != "yaoi" } }
                 .filter { it.tags.all { tag -> tag.translated_name != "yaoi" } }
@@ -321,10 +321,10 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
                 .filter { it.tags.all { tag -> !tag.name.contains("【腐】") } }
 //                .filter { it.tags.all { tag -> !tag.translated_name?.contains("BL fanwork")!! } }
                 .filter { it.tags.all { tag -> tag.name != "R-18" } }
-                .toList()
+//                .toList()
         else {
             return it
-                .asSequence()
+//                .asSequence()
                 .filter { it.tags.all { tag -> tag.name != "shota" } }
                 .filter { it.tags.all { tag -> tag.name != "yaoi" } }
                 .filter { it.tags.all { tag -> tag.translated_name != "yaoi" } }
@@ -345,7 +345,7 @@ class IllustFragment : LazyV4Fragment(), AdapterView.OnItemSelectedListener {
                 .filter { it.tags.all { tag -> tag.translated_name != "femboy" } }
                 .filter { it.tags.all { tag -> !tag.name.contains("【腐】") } }
 //                .filter { it.tags.all { tag -> !tag.translated_name?.contains("BL fanwork")!! } }
-                .toList()
+//                .toList()
         }
     }
 
