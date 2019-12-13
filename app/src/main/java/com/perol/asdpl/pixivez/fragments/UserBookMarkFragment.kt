@@ -36,6 +36,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.adapters.RecommendAdapterV2
@@ -84,13 +85,39 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback, MainInte
                 fab_selected_btn.visibility = View.VISIBLE
 //                fab_selected_btn_cancel!!.visibility = View.VISIBLE
                 fab_selected_btn.setOnClickListener {
-                    shouldResetRecyclerView = true
-                    isMultiSelectOn = false
-                    recommendAdapter.downloadSelectedIllusts()
+
+
+                    val normalDialog = MaterialAlertDialogBuilder(context)
+                    normalDialog.setMessage("Do you want to download selected images from your bookmarks?")
+                    normalDialog.setPositiveButton(
+                        "Yes"
+                    ) { _, _ ->
+                        Toast.makeText(
+                            context,
+                            "Downloading selected images from user bookmarks",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        shouldResetRecyclerView = true
+                        isMultiSelectOn = false
+                        recommendAdapter.downloadSelectedIllusts()
+                        recommendAdapter.notifyDataSetChanged()
+                    }
+                        .setNegativeButton(
+                            "Cancel"
+                        ) { _, _ ->
+
+                            shouldResetRecyclerView = true
+                            isMultiSelectOn = false
+                            recommendAdapter.setIsLongPress(false)
+                            recommendAdapter.notifyDataSetChanged()
+                        }
+                    normalDialog.show()
+
                     fab_selected_btn_cancel!!.visibility = View.GONE
                 }
                 fab_selected_btn_cancel!!.setOnClickListener {
                     recommendAdapter.selectedIds.clear()
+                    recommendAdapter.setIsLongPress(false)
                     recommendAdapter.notifyDataSetChanged()
 
                     isMultiSelectOn = false
@@ -108,7 +135,10 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback, MainInte
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isMultiSelectOn = false
-        mrecyclerview.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        val manager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+//        manager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        mrecyclerview.layoutManager = manager
+
         mrecyclerview.adapter = recommendAdapter
         recommendAdapter.setOnLoadMoreListener({
             viewmodel!!.onLoadMoreListener()
@@ -189,12 +219,20 @@ class UserBookMarkFragment : LazyV4Fragment(), TagsShowDialog.Callback, MainInte
 
 
     private fun showDownloadDialog() {
-        Toast.makeText(
-            context,
-            "Downloading ${illusts.size} images from user bookmarks",
-            Toast.LENGTH_SHORT
-        ).show()
-        Works.imagesUserBookmarkAll(illusts)
+        val normalDialog = MaterialAlertDialogBuilder(context)
+        normalDialog.setMessage("Do you want to download ${illusts.size} images from your bookmarks?")
+        normalDialog.setPositiveButton(
+            "Yes"
+        ) { _, _ ->
+            Toast.makeText(
+                context,
+                "Downloading ${illusts.size} images from user bookmarks",
+                Toast.LENGTH_SHORT
+            ).show()
+            Works.imagesUserBookmarkAll(illusts)
+        }
+        normalDialog.show()
+
     }
 
     fun showtagdialog() {

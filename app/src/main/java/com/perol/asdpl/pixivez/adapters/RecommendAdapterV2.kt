@@ -28,7 +28,6 @@ import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.TypedValue
@@ -67,31 +66,36 @@ class RecommendAdapterV2(
     BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data) {
 
 
-    fun onLongTap(index: Int) {
+    private fun onLongTap(index: Int) {
         if (!UserBookMarkFragment.isMultiSelectOn) {
             UserBookMarkFragment.isMultiSelectOn = true
         }
         addIDIntoSelectedIds(index)
+        isLongPress = true
         mainInterface.onLongPress(true)
     }
 
-    fun onTap(index: Int) {
+    private fun onTap(index: Int) {
         if (UserBookMarkFragment.isMultiSelectOn) {
             addIDIntoSelectedIds(index)
         }
     }
 
-    var modelList: MutableList<Illust> = ArrayList<Illust>()
+    private var isLongPress: Boolean = false
     val selectedIds: MutableList<String> = ArrayList<String>()
-
-
-    fun addIDIntoSelectedIds(index: Int) {
-        val id = data[index].id.toString()
-        if (selectedIds.contains(id))
-            selectedIds.remove(id)
-        else
+    private fun addIDIntoSelectedIds(index: Int) {
+        val id = data[index - 1].id.toString()
+        var foundItem = false
+        for (selectedId: String in selectedIds) {
+            if (selectedId.trim() == id.trim()) {
+                selectedIds.remove(selectedId)
+                foundItem = true
+                break
+            }
+        }
+        if (!foundItem) {
             selectedIds.add(id)
-
+        }
         notifyItemChanged(index)
         if (selectedIds.size < 1) UserBookMarkFragment.isMultiSelectOn = false
         mainInterface.mainInterface(selectedIds.size, index)
@@ -171,6 +175,8 @@ class RecommendAdapterV2(
             helper.itemView.findViewById<ConstraintLayout>(R.id.constraintLayout_num)
         val imageView = helper.getView<ImageView>(R.id.item_img)
         val cardview_recommand = helper.getView<MaterialCardView>(R.id.cardview_recommand)
+        val item_long_press_unchecked = helper.getView<ImageView>(R.id.item_long_press_unchecked)
+        val item_long_press_checked = helper.getView<ImageView>(R.id.item_long_press_checked)
         when (item.type) {
             "illust" -> if (item.meta_pages.isEmpty()) {
                 constraintLayout.visibility = View.INVISIBLE
@@ -261,23 +267,38 @@ class RecommendAdapterV2(
         cardview_recommand.setOnLongClickListener {
             val position = helper.adapterPosition
             onLongTap(position)
+
             true
         }
 
+        if (isLongPress) {
+            var foundItem = false
+            item_long_press_unchecked.visibility = View.VISIBLE
+            for (selectedId: String in selectedIds) {
+                if (selectedId.trim() == id.trim()) {
+                    foundItem = true
+                    item_long_press_checked.visibility = View.VISIBLE
+                    item_long_press_unchecked.visibility = View.GONE
+                }
+            }
+            if (!foundItem) {
+                item_long_press_checked.visibility = View.GONE
+                item_long_press_unchecked.visibility = View.VISIBLE
+            }
+        } else {
+            item_long_press_checked.visibility = View.GONE
+            item_long_press_unchecked.visibility = View.GONE
+        }
         cardview_recommand.setOnClickListener {
             val position = helper.adapterPosition
             onTap(position)
         }
-        if (selectedIds.equals(id)) {
-            //if item is selected then,set foreground color of FrameLayout.
-            cardview_recommand?.foreground =
-                ColorDrawable(ContextCompat.getColor(mContext, R.color.md_red_600))
-        } else {
-            //else remove selected item color.
-            cardview_recommand?.foreground =
-                ColorDrawable(ContextCompat.getColor(mContext, android.R.color.transparent))
-        }
 
+
+    }
+
+    fun setIsLongPress(v: Boolean) {
+        isLongPress = v
     }
 
     fun downloadSelectedIllusts() {
@@ -293,7 +314,7 @@ class RecommendAdapterV2(
             }
         }
         Works.imagesUserBookmarkAll(list)
-
+        isLongPress = false
         selectedIds.clear()
         UserBookMarkFragment.isMultiSelectOn = false
     }
