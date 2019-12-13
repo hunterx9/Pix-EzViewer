@@ -194,6 +194,14 @@ class SettingFragment : PreferenceFragmentCompat(), IconDialog.Callback {
                 .show()
             true
         }
+        findPreference<SwitchPreference>("tap_swipe")!!.setOnPreferenceChangeListener { preference, newValue ->
+            Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
+                .setAction(R.string.restart_now) {
+                    Toasty.info(PxEZApp.instance, "Done", Toast.LENGTH_SHORT).show()
+                }
+                .show()
+            true
+        }
         findPreference<DropDownPreference>("search_format")!!.setOnPreferenceChangeListener { preference, newValue ->
             Snackbar.make(requireView(), getString(R.string.needtorestart), Snackbar.LENGTH_SHORT)
                 .setAction(R.string.restart_now) {
