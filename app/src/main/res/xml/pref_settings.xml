@@ -97,7 +97,7 @@
         <SwitchPreference
             android:defaultValue="false"
             android:summaryOff="App preview in Recent Apps enabled"
-            android:summaryOn="App preview on Recent Apps. Enable if you need to take a screenshot"
+            android:summaryOn="App preview on Recent Apps disabled. Enable if you need to take a screenshot"
             android:title="App preview on Recent Apps"
             app:key="privacy" />
         <SwitchPreference
