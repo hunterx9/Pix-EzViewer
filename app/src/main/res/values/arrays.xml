@@ -19,6 +19,7 @@
         <item>默认</item>
         <item>默认asc</item>
         <item>热门</item>
+        <item>top hot</item>
     </string-array>
     <string-array name="firstpage">
         <item>推荐</item>

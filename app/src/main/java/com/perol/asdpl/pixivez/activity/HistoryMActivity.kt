@@ -60,10 +60,16 @@ class HistoryMActivity : RinkActivity() {
         }
         historyAdapter.setOnItemClickListener { _, _, position ->
             val bundle = Bundle()
-            val arrayList = LongArray(1)
-            arrayList[0] = (historyMViewModel!!.illustBeans.value!![position].illustid)
+            val illusts = historyMViewModel!!.illustBeans.value!!
+            bundle.putLong("illustid", illusts[position].illustid)
+            val arrayList = LongArray(illusts.count())
+            for (i in illusts.indices) {
+                arrayList[i] = illusts[i].illustid
+            }
+
+//            arrayList[0] = (historyMViewModel!!.illustBeans.value!![position].illustid)
             bundle.putLongArray("illustlist", arrayList)
-            bundle.putLong("illustid", historyMViewModel!!.illustBeans.value!![position].illustid)
+            bundle.putBoolean("history", true)
             val intent2 = Intent(applicationContext, PictureActivity::class.java)
             intent2.putExtras(bundle)
             startActivity(intent2)

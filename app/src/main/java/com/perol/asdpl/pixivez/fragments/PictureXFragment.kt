@@ -26,7 +26,6 @@ package com.perol.asdpl.pixivez.fragments
 
 
 import TagsBookMarkDialog
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -36,7 +35,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.perol.asdpl.pixivez.R
@@ -46,7 +44,7 @@ import com.perol.asdpl.pixivez.adapters.PictureXAdapter
 import com.perol.asdpl.pixivez.databinding.FragmentPictureXBinding
 import com.perol.asdpl.pixivez.dialog.CommentDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
-import com.perol.asdpl.pixivez.objects.BaseFragment
+import com.perol.asdpl.pixivez.objects.BaseFragmentV2
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
@@ -66,11 +64,11 @@ private const val ARG_PARAM1 = "param1"
  * create an instance of this fragment.
  *
  */
-class PictureXFragment : BaseFragment() {
+class PictureXFragment : BaseFragmentV2() {
 
     private var param1: Long? = null
     private lateinit var pictureXViewModel: PictureXViewModel
-    override fun loadData() {
+    fun loadData() {
 //        val item = activity?.intent?.extras
 //        val illust = item?.getParcelable<Illust>(param1.toString())
         pictureXViewModel.firstGet(param1!!)
@@ -117,6 +115,7 @@ class PictureXFragment : BaseFragment() {
     private fun initViewModel() {
 
         pictureXViewModel = ViewModelProvider(this).get(PictureXViewModel::class.java)
+        loadData()
         pictureXViewModel.illustDetailResponse.observe(this, Observer {
             progress_view.visibility = View.GONE
             if (it != null) {

@@ -19,6 +19,7 @@
         <item>預設</item>
         <item>預設asc</item>
         <item>熱門</item>
+        <item>top hot</item>
     </string-array>
     <string-array name="firstpage">
         <item>推薦</item>

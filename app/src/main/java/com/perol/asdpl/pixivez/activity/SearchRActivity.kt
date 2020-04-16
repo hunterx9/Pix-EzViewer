@@ -73,6 +73,7 @@ class SearchRActivity : RinkActivity() {
         setContentView(R.layout.activity_search_r)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         tagsTextViewModel = ViewModelProviders.of(this).get(TagsTextViewModel::class.java)
         trendTagViewModel = ViewModelProviders.of(this).get(TrendTagViewModel::class.java)
         searchRActivityFragment = SearchRActivityFragment()

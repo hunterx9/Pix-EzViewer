@@ -4,6 +4,7 @@
 <ImageView android:id="@+id/imageview_pic"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#192939"
     android:adjustViewBounds="true"
     android:scaleType="fitStart"
     xmlns:android="http://schemas.android.com/apk/res/android" />

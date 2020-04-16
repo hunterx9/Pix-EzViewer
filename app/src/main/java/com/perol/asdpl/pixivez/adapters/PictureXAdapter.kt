@@ -73,7 +73,6 @@ import com.perol.asdpl.pixivez.activity.SearchResultActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.activity.ZoomActivity
 import com.perol.asdpl.pixivez.databinding.ViewPicturexDetailBinding
-import com.perol.asdpl.pixivez.fragments.PictureXFragment
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.TToast
 import com.perol.asdpl.pixivez.objects.Toasty
@@ -91,18 +90,14 @@ import com.waynejo.androidndkgif.GifEncoder
 import com.zhy.view.flowlayout.FlowLayout
 import com.zhy.view.flowlayout.TagAdapter
 import com.zhy.view.flowlayout.TagFlowLayout
-import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import java.io.File
-import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -423,7 +418,7 @@ class PictureXAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is PictureViewHolder) {
             val imageView = holder.itemView.findViewById<ImageView>(R.id.imageview_pic)
-            GlideApp.with(imageView).load(imageUrls[position]).placeholder(R.color.white)
+            GlideApp.with(imageView).load(imageUrls[position]).placeholder(R.color.black)
                 .transition(withCrossFade()).listener(object : RequestListener<Drawable> {
 
                     override fun onLoadFailed(

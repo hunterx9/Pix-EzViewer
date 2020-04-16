@@ -6,10 +6,11 @@ abstract class LazyFragment : Fragment() {
     private var isLoaded = false
     override fun onResume() {
         super.onResume()
-        if (!isLoaded) {
-            isLoaded = true
-            loadData()
-        }
+        loadData()
+//        if (!isLoaded) {
+//            isLoaded = true
+//            loadData()
+//        }
     }
 
     protected abstract fun loadData()

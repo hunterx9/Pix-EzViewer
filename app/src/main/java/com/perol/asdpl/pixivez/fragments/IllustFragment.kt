@@ -26,7 +26,9 @@ package com.perol.asdpl.pixivez.fragments
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -95,7 +97,12 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
                     }
 
                 }
-            } else {
+            } else if(position == 3){
+                val sorted_data =
+                    searchIllustAdapter.data.sortedWith(compareBy { it.total_bookmarks }).reversed()
+                searchIllustAdapter.replaceData(sorted_data)
+                recyclerview_illust.scrollToPosition(0)
+            }else {
                 viewModel.sort.value = sort[position]
                 viewModel.firstSetData(param1!!)
             }
@@ -125,6 +132,8 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         recyclerview_illust.adapter = searchIllustAdapter
         recyclerview_illust.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+
+
         fab.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(activity)
             val arrayList = arrayOfNulls<String>(starnum.size)
@@ -147,6 +156,11 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
                     recyclerview_illust.scrollToPosition(0)
                 }
             builder.create().show()
+        }
+
+        fab_plus.setOnClickListener {
+            val bottomsheet = TrendTagFragmentV2.newInstance(param1+"")
+            bottomsheet.show(childFragmentManager,"bottomtag")
         }
         val imageButton = activity!!.findViewById<ImageButton>(R.id.imagebutton_section)
         imageButton.setOnClickListener {

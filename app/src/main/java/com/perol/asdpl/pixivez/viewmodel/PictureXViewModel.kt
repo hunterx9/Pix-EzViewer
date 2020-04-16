@@ -29,6 +29,7 @@ import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.BookMarkDetailResponse
 import com.perol.asdpl.pixivez.responses.Illust
 import com.perol.asdpl.pixivez.responses.IllustDetailResponse
+import com.perol.asdpl.pixivez.responses.RecommendResponse
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.UnzipUtil
 import com.perol.asdpl.pixivez.sql.AppDatabase
@@ -39,6 +40,7 @@ import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 class PictureXViewModel : BaseViewModel() {
+    val newRec = arrayListOf<Illust>()
     val illustDetailResponse = MutableLiveData<IllustDetailResponse?>()
     val retrofitRespository: RetrofitRepository = RetrofitRepository.getInstance()
     val aboutPics = MutableLiveData<ArrayList<Illust>>()
@@ -146,6 +148,24 @@ class PictureXViewModel : BaseViewModel() {
         disposables.add(retrofitRespository.getIllustRecommended(long).subscribe({
 
             aboutPics.value = it.illusts as ArrayList<Illust>?
+            newRec.addAll(it.illusts as ArrayList<Illust>)
+            disposables.add(
+                retrofitRespository.getIllustRecommendedNext(
+                    long,
+                    30
+                ).subscribe({ nextIt: RecommendResponse ->
+                    newRec.addAll(nextIt.illusts as ArrayList<Illust>)
+                    disposables.add(
+                        retrofitRespository.getIllustRecommendedNext(
+                            long,
+                            60
+                        ).subscribe({ nextIt2: RecommendResponse ->
+                            newRec.addAll(nextIt2.illusts as ArrayList<Illust>)
+                            aboutPics.value = newRec
+                        }, {}, {})
+                    )
+
+                }, {}, {}))
         }, {}, {}))
     }
 

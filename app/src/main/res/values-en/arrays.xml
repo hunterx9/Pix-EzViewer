@@ -19,6 +19,7 @@
         <item>default</item>
         <item>default asc</item>
         <item>hot</item>
+        <item>top hot</item>
     </string-array>
     <string-array name="firstpage">
         <item>recommend</item>

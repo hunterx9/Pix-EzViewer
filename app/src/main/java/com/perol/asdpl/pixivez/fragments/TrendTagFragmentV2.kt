@@ -30,25 +30,26 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.perol.asdpl.pixivez.R
-import com.perol.asdpl.pixivez.activity.PictureActivity
 import com.perol.asdpl.pixivez.activity.SearchResultActivity
-import com.perol.asdpl.pixivez.adapters.TrendingTagAdapter
 import com.perol.asdpl.pixivez.sql.SearchHistoryEntity
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.trend_tag_fragment.*
 
-
-class TrendTagFragment : Fragment() {
+private const val ARG_PARAM1 = "word"
+class TrendTagFragmentV2 : BottomSheetDialogFragment() {
+    private var tags: String = ""
     private val mDisposable = CompositeDisposable()
 
     companion object {
-        fun newInstance() = TrendTagFragment()
+        fun newInstance(tag: String) = TrendTagFragmentV2().apply {
+
+            arguments = Bundle().apply {  putString(ARG_PARAM1, tag)}
+        }
     }
 
     private lateinit var viewModel: TrendTagViewModel
@@ -56,7 +57,7 @@ class TrendTagFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.trend_tag_fragment, container, false)
+        return inflater.inflate(R.layout.trend_tag_fragmentv2, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,6 +66,12 @@ class TrendTagFragment : Fragment() {
 
             viewModel.sethis()
         }
+        arguments?.let {
+            tags = it.getString(ARG_PARAM1)!!
+
+        }
+
+        textView_clearn.visibility = View.GONE
     }
 
     override fun onStop() {
@@ -77,33 +84,7 @@ class TrendTagFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(TrendTagViewModel::class.java)
-        mDisposable.add(viewModel.getIllustTrendTags().subscribe({
-            if (it != null) {
-                recyclerview_searhm.layoutManager =
-                    StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
-                val trendingtagAdapter =
-                    TrendingTagAdapter(R.layout.view_trendingtag_item, it.trend_tags)
-                recyclerview_searhm.adapter = trendingtagAdapter
-                recyclerview_searhm.isNestedScrollingEnabled = false
-                trendingtagAdapter.setOnItemClickListener { adapter, view, position ->
-                    val searchword = it.trend_tags[position].tag
-                    upToPage(searchword)
-                    viewModel.addhistory(searchword)
-                }
-                trendingtagAdapter.setOnItemLongClickListener { adapter, view, position ->
-                    var id = it.trend_tags[position].illust.id
-                    val bundle = Bundle()
-                    val arrayList = LongArray(1)
-                    arrayList[0] = id
-                    bundle.putLongArray("illustlist", arrayList)
-                    bundle.putLong("illustid", id)
-                    val intent2 = Intent(requireActivity(), PictureActivity::class.java)
-                    intent2.putExtras(bundle)
-                    startActivity(intent2)
-                    true
-                }
-            }
-        }, {}))
+
         viewModel.searchhistroy.observe(viewLifecycleOwner, Observer { it ->
 
             val arrayList = ArrayList<String>()
@@ -150,7 +131,7 @@ class TrendTagFragment : Fragment() {
             val splits = query.split('|')
             nameQuery = splits[0]
         }
-        bundle.putString("searchword", nameQuery)
+        bundle.putString("searchword", "$tags $nameQuery")
         val intent = Intent(activity!!, SearchResultActivity::class.java)
         intent.putExtras(bundle)
         startActivityForResult(intent, 775)

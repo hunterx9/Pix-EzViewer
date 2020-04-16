@@ -19,6 +19,7 @@
         <item>デフォルト</item>
         <item>デフォルト(古い順)</item>
         <item>人気</item>
+        <item>top hot</item>
     </string-array>
     <string-array name="firstpage">
         <item>おすすめ</item>
