@@ -74,10 +74,15 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
             val allTags = blockViewModel.getAllTags()
+            val allUsers = blockViewModel.getAllUsers()
             blockTags = allTags.map {
                 it.name
             }
+            blockUsers = allUsers.map {
+                it.name
+            }
             searchIllustAdapter.blockTags = blockTags
+            searchIllustAdapter.blockUsers = blockUsers
             searchIllustAdapter.notifyDataSetChanged()
         }
     }
@@ -97,12 +102,12 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
                     }
 
                 }
-            } else if(position == 3){
+            } else if (position == 3) {
                 val sorted_data =
-                    searchIllustAdapter.data.sortedWith(compareBy { it.total_bookmarks }).reversed()
+                        searchIllustAdapter.data.sortedWith(compareBy { it.total_bookmarks }).reversed()
                 searchIllustAdapter.replaceData(sorted_data)
                 recyclerview_illust.scrollToPosition(0)
-            }else {
+            } else {
                 viewModel.sort.value = sort[position]
                 viewModel.firstSetData(param1!!)
             }
@@ -116,22 +121,23 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         super.onViewCreated(view, savedInstanceState)
         val searchtext = requireActivity().findViewById<TextView>(R.id.searchtext)
         searchIllustAdapter = RecommendAdapter(
-            R.layout.view_recommand_item,
-            emptyList(),
-            isR18on,
-            blockTags
+                R.layout.view_recommand_item,
+                emptyList(),
+                isR18on,
+                blockTags,
+                blockUsers
         ).apply {
             val view = LayoutInflater.from(requireContext()).inflate(
-                R.layout.search_result_header, null
+                    R.layout.search_result_header, null
             )
             view.findViewById<Spinner>(R.id.spinner_result).onItemSelectedListener =
-                this@IllustFragment
+                    this@IllustFragment
             setHeaderView(view)
         }
         searchtext.text = param1
         recyclerview_illust.adapter = searchIllustAdapter
         recyclerview_illust.layoutManager =
-            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
 
         fab.setOnClickListener {
@@ -144,23 +150,23 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
                     arrayList[i] = (param1 + " " + starnum[i].toString() + "users入り")
             }
             builder.setTitle("users入り")
-                .setItems(
-                    arrayList
-                ) { _, which ->
+                    .setItems(
+                            arrayList
+                    ) { _, which ->
 
-                    val query = if (starnum[which] == 0)
-                        "$param1 users入り"
-                    else
-                        param1 + " " + starnum[which].toString() + "users入り"
-                    viewModel.firstSetData(query)
-                    recyclerview_illust.scrollToPosition(0)
-                }
+                        val query = if (starnum[which] == 0)
+                            "$param1 users入り"
+                        else
+                            param1 + " " + starnum[which].toString() + "users入り"
+                        viewModel.firstSetData(query)
+                        recyclerview_illust.scrollToPosition(0)
+                    }
             builder.create().show()
         }
 
         fab_plus.setOnClickListener {
-            val bottomsheet = TrendTagFragmentV2.newInstance(param1+"")
-            bottomsheet.show(childFragmentManager,"bottomtag")
+            val bottomsheet = TrendTagFragmentV2.newInstance(param1 + "")
+            bottomsheet.show(childFragmentManager, "bottomtag")
         }
         val imageButton = activity!!.findViewById<ImageButton>(R.id.imagebutton_section)
         imageButton.setOnClickListener {
@@ -179,14 +185,14 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
                 if (!user.ispro && selectSort == 2) {
                     Toasty.error(PxEZApp.instance, "not premium!").show()
                     viewModel.setPreview(
-                        param1!!,
-                        sort[selectSort],
-                        search_target[selectTarget],
-                        duration[selectDuration]
+                            param1!!,
+                            sort[selectSort],
+                            search_target[selectTarget],
+                            duration[selectDuration]
                     )
                 } else {
                     viewModel.firstSetData(
-                        param1!!
+                            param1!!
                     )
                 }
             }
@@ -218,15 +224,15 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
             gestureDetector.onTouchEvent(event)
         }*/
         requireActivity().findViewById<TabLayout>(R.id.tablayout_searchresult)?.getTabAt(0)
-            ?.view?.setOnClickListener {
-            if ((System.currentTimeMillis() - exitTime) > 3000) {
+                ?.view?.setOnClickListener {
+                    if ((System.currentTimeMillis() - exitTime) > 3000) {
 
-                exitTime = System.currentTimeMillis()
-            } else {
-                recyclerview_illust.smoothScrollToPosition(0)
-            }
+                        exitTime = System.currentTimeMillis()
+                    } else {
+                        recyclerview_illust.smoothScrollToPosition(0)
+                    }
 
-        }
+                }
     }
 
     private val starnum = intArrayOf(50000, 30000, 20000, 10000, 5000, 1000, 500, 250, 100, 0)
@@ -234,15 +240,15 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     lateinit var searchIllustAdapter: RecommendAdapter
     var sort = arrayOf("date_desc", "date_asc", "popular_desc")
     var search_target =
-        arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
+            arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
 
     var duration = arrayOf(
-        null,
-        "within_last_day",
-        "within_last_week",
-        "within_last_month",
-        "within_half_year",
-        "within_year"
+            null,
+            "within_last_day",
+            "within_last_week",
+            "within_last_month",
+            "within_half_year",
+            "within_year"
     )
     var selectSort: Int = 0
     var selectTarget: Int = 0
@@ -259,9 +265,9 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
 
 
@@ -299,9 +305,9 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     private fun changeToBlue(it: Long?) {
         if (it != null) {
             val item = searchIllustAdapter.getViewByPosition(
-                recyclerview_illust,
-                position!!,
-                R.id.linearlayout_isbookmark
+                    recyclerview_illust,
+                    position!!,
+                    R.id.linearlayout_isbookmark
             ) as LinearLayout
             item.setBackgroundColor(Color.YELLOW)
             Toasty.success(requireActivity(), "收藏成功", Toast.LENGTH_SHORT).show()
@@ -334,11 +340,11 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String) =
-            IllustFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
+                IllustFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(ARG_PARAM1, param1)
 
+                    }
                 }
-            }
     }
 }

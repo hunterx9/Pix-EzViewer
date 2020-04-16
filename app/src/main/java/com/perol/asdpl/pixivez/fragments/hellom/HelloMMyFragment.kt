@@ -65,13 +65,19 @@ class HelloMMyFragment : BaseFragment() {
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
             val allTags = blockViewModel.getAllTags()
+            val allUsers = blockViewModel.getAllUsers()
             blockTags = allTags.map {
                 it.name
             }
+            blockUsers = allUsers.map {
+                it.name
+            }
             rankingAdapter.blockTags = blockTags
+            rankingAdapter.blockUsers = blockUsers
             rankingAdapter.notifyDataSetChanged()
         }
     }
+
     lateinit var rankingAdapter: RecommendAdapter
     var viewmodel: HelloMMyViewModel? = null
     var restrict = "all"
@@ -114,17 +120,21 @@ class HelloMMyFragment : BaseFragment() {
         lazyLoad()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
-        rankingAdapter = RecommendAdapter(R.layout.view_recommand_item, null, isR18on, blockTags)
+        rankingAdapter =
+            RecommendAdapter(R.layout.view_recommand_item, null, isR18on, blockTags, blockUsers)
         return inflater.inflate(R.layout.fragment_hello_mmy, container, false)
     }
 
     private var exitTime = 0L
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerview_mym.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        recyclerview_mym.layoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         recyclerview_mym.adapter = rankingAdapter
         swiperefresh_mym.setOnRefreshListener {
             viewmodel!!.OnRefreshListener(restrict)
@@ -133,7 +143,12 @@ class HelloMMyFragment : BaseFragment() {
             viewmodel!!.onLoadMoreRequested()
         }, recyclerview_mym)
         spinner_mmy.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 when (position) {
                     0 -> {
                         restrict = "all"
@@ -155,13 +170,13 @@ class HelloMMyFragment : BaseFragment() {
         }
         parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout_hellomth)?.getTabAt(0)
             ?.view?.setOnClickListener {
-            if ((System.currentTimeMillis() - exitTime) > 3000) {
-                exitTime = System.currentTimeMillis()
-            } else {
-                recyclerview_mym.smoothScrollToPosition(0)
-            }
+                if ((System.currentTimeMillis() - exitTime) > 3000) {
+                    exitTime = System.currentTimeMillis()
+                } else {
+                    recyclerview_mym.smoothScrollToPosition(0)
+                }
 
-        }
+            }
     }
 
     companion object {
@@ -176,11 +191,11 @@ class HelloMMyFragment : BaseFragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-                HelloMMyFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
+            HelloMMyFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
                 }
+            }
     }
 }

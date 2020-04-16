@@ -29,6 +29,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.perol.asdpl.pixivez.sql.dao.BlockTagDao
+import com.perol.asdpl.pixivez.sql.dao.BlockUserDao
 import com.perol.asdpl.pixivez.sql.dao.IllustDao
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.sql.entity.Illust
@@ -44,6 +45,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun IllustDao(): IllustDao
     abstract fun blockTagDao(): BlockTagDao
+    abstract fun blockUserDao(): BlockUserDao
 
     companion object {
         @Volatile

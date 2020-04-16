@@ -100,15 +100,24 @@ class PictureXFragment : BaseFragmentV2() {
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
             val allTags = blockViewModel.getAllTags()
+            val allUsers = blockViewModel.getAllUsers()
             blockTags = allTags.map {
                 it.name
             }
+            blockUsers = allUsers.map {
+                it.name
+            }
             var needBlock = false
+            var needBlockUser = false
             pictureXViewModel.illustDetailResponse.value?.illust?.tags?.forEach {
                 if (blockTags.contains(it.name)) needBlock = true
             }
-            if (!needBlock) {
+            if(blockUsers.contains(pictureXViewModel.illustDetailResponse.value?.illust?.user?.name)) {
+                needBlockUser = true
+            }
+            if (!needBlock || !needBlockUser) {
                 block_view.visibility = View.GONE
+
             }
         }
     }

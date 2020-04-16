@@ -63,10 +63,15 @@ class UserIllustFragment : BaseFragment() {
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
             val allTags = blockViewModel.getAllTags()
+            val allUsers = blockViewModel.getAllUsers()
             blockTags = allTags.map {
                 it.name
             }
+            blockUsers = allUsers.map {
+                it.name
+            }
             recommendAdapter.blockTags = blockTags
+            recommendAdapter.blockUsers = blockUsers
             recommendAdapter.notifyDataSetChanged()
         }
     }
@@ -131,7 +136,7 @@ class UserIllustFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        recommendAdapter = RecommendAdapter(R.layout.view_recommand_item, null, isR18on, blockTags)
+        recommendAdapter = RecommendAdapter(R.layout.view_recommand_item, null, isR18on, blockTags,blockUsers)
 
         return inflater.inflate(R.layout.fragment_user_illust, container, false)
     }

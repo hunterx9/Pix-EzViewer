@@ -39,6 +39,7 @@ abstract class BaseFragmentV2 : Fragment() {
     var isR18on = false
 
     var blockTags = emptyList<String>()
+    var blockUsers = emptyList<String>()
 
     override fun onDestroy() {
         super.onDestroy()
@@ -60,10 +61,15 @@ abstract class BaseFragmentV2 : Fragment() {
         try {
             runBlocking {
                 val result = blockViewModel.getAllTags()
+                val resultUsers = blockViewModel.getAllUsers()
                 blockTags = result.map {
                     it.name
                 }
+                blockUsers = resultUsers.map {
+                    it.name
+                }
                 if (blockTags.isNullOrEmpty()) blockTags = emptyList()
+                if (blockUsers.isNullOrEmpty()) blockUsers = emptyList()
             }
         } catch (e: Exception) {
             e.printStackTrace()

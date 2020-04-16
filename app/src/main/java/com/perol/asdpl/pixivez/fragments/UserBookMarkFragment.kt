@@ -83,7 +83,8 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
             R.layout.view_recommand_item,
             null,
             isR18on,
-            blockTags
+            blockTags,
+            blockUsers
         )
         mrecyclerview.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
@@ -195,10 +196,13 @@ class UserBookMarkFragment : BaseFragment(), TagsShowDialog.Callback {
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
             val allTags = blockViewModel.getAllTags()
+            val allUsers = blockViewModel.getAllUsers()
             blockTags = allTags.map {
                 it.name
             }
+            blockUsers = allUsers.map { it.name }
             recommendAdapter.blockTags = blockTags
+            recommendAdapter.blockUsers = blockUsers
             recommendAdapter.notifyDataSetChanged()
         }
     }

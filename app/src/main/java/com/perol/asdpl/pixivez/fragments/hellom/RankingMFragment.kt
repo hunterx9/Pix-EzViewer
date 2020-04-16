@@ -75,10 +75,15 @@ class RankingMFragment : BaseFragment() {
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
             val allTags = blockViewModel.getAllTags()
+            val allUsers = blockViewModel.getAllUsers()
             blockTags = allTags.map {
                 it.name
             }
+            blockUsers = allUsers.map {
+                it.name
+            }
             rankingAdapter.blockTags = blockTags
+            rankingAdapter.blockUsers = blockUsers
             rankingAdapter.notifyDataSetChanged()
         }
     }
@@ -163,7 +168,7 @@ class RankingMFragment : BaseFragment() {
         rankingAdapter = RankingAdapter(
             R.layout.view_ranking_item,
             null,
-            isR18on, blockTags
+            isR18on, blockTags,blockUsers
         )
         return inflater.inflate(R.layout.fragment_ranking_m, container, false)
     }

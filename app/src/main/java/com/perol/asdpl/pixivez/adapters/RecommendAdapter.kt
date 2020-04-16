@@ -58,7 +58,8 @@ class RecommendAdapter(
     layoutResId: Int,
     data: List<Illust>?,
     private val R18on: Boolean,
-    var blockTags: List<String>
+    var blockTags: List<String>,
+    var blockUsers: List<String>
 ) :
     BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data) {
     init {
@@ -101,7 +102,10 @@ class RecommendAdapter(
         val tags = item.tags.map {
             it.name
         }
+
+        val user = item.user.name
         var needBlock = false
+        var needBlockUser = false
         for (i in blockTags) {
             if (tags.contains(i)) {
                 needBlock = true
@@ -109,7 +113,20 @@ class RecommendAdapter(
             }
         }
 
+        for (i in blockUsers){
+            if(user.contains(i)){
+                needBlockUser = true
+            }
+        }
+
         if (blockTags.isNotEmpty() && tags.isNotEmpty() && needBlock) {
+            helper.itemView.visibility = View.GONE
+            helper.itemView.layoutParams.apply {
+                height = 0
+                width = 0
+            }
+            return
+        }else if (blockUsers.isNotEmpty() && user.isNotEmpty() && needBlockUser) {
             helper.itemView.visibility = View.GONE
             helper.itemView.layoutParams.apply {
                 height = 0

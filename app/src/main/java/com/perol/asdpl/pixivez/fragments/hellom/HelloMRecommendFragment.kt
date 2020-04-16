@@ -80,10 +80,15 @@ class HelloMRecommendFragment : BaseFragment() {
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
             val allTags = blockViewModel.getAllTags()
+            val allUsers = blockViewModel.getAllUsers()
             blockTags = allTags.map {
                 it.name
             }
+            blockUsers = allUsers.map {
+                it.name
+            }
             rankingAdapter.blockTags = blockTags
+            rankingAdapter.blockUsers = blockUsers
             rankingAdapter.notifyDataSetChanged()
         }
     }
@@ -168,18 +173,18 @@ class HelloMRecommendFragment : BaseFragment() {
 
         parentFragment?.view?.findViewById<TabLayout>(R.id.tablayout)?.getTabAt(0)
             ?.view?.setOnClickListener {
-            if ((System.currentTimeMillis() - exitTime) > 3000) {
-                Toast.makeText(
-                    PxEZApp.instance,
-                    getString(R.string.back_to_the_top),
-                    Toast.LENGTH_SHORT
-                ).show();
-                exitTime = System.currentTimeMillis()
-            } else {
-                recyclerview_recom.smoothScrollToPosition(0)
-            }
+                if ((System.currentTimeMillis() - exitTime) > 3000) {
+                    Toast.makeText(
+                        PxEZApp.instance,
+                        getString(R.string.back_to_the_top),
+                        Toast.LENGTH_SHORT
+                    ).show();
+                    exitTime = System.currentTimeMillis()
+                } else {
+                    recyclerview_recom.smoothScrollToPosition(0)
+                }
 
-        }
+            }
     }
 
     private lateinit var bannerView: View
@@ -191,7 +196,8 @@ class HelloMRecommendFragment : BaseFragment() {
             R.layout.view_recommand_item,
             null,
             isR18on,
-            blockTags
+            blockTags,
+            blockUsers
         )
         bannerView = inflater.inflate(R.layout.header_recom, container, false)
         rankingAdapter.apply {

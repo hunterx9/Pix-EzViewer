@@ -58,7 +58,8 @@ class RankingAdapter(
     layoutResId: Int,
     data: List<Illust>?,
     private val R18on: Boolean,
-    var blockTags: List<String>
+    var blockTags: List<String>,
+    var blockUsers: List<String>
 ) : BaseQuickAdapter<Illust, BaseViewHolder>(layoutResId, data),
     BaseQuickAdapter.OnItemClickListener {
 
@@ -107,10 +108,19 @@ class RankingAdapter(
         val tags = item.tags.map {
             it.name
         }
+        val user = item.user.name
         var needBlock = false
+        var needBlockUsers = false
         for (i in blockTags) {
             if (tags.contains(i)) {
                 needBlock = true
+                break
+            }
+        }
+
+        for (i in blockUsers) {
+            if (user.contains(i)) {
+                needBlockUsers = true
                 break
             }
         }
@@ -122,7 +132,14 @@ class RankingAdapter(
                 width = 0
             }
             return
-        } else {
+        } else if(blockUsers.isNotEmpty()&&user.isNotEmpty() && needBlockUsers){
+            helper.itemView.visibility = View.GONE
+            helper.itemView.layoutParams.apply {
+                height = 0
+                width = 0
+            }
+            return
+        }else {
             helper.itemView.visibility = View.VISIBLE
             helper.itemView.layoutParams.apply {
                 height = LinearLayout.LayoutParams.WRAP_CONTENT
