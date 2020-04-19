@@ -233,13 +233,15 @@ class RankingAdapter(
 
 
         val needSmall = item.height > 1500 || item.height > 1500
+
         val loadUrl = if (needSmall) {
             item.image_urls.square_medium
         } else {
             item.image_urls.medium
         }
+        val isr18 = tags.contains("R-18") || tags.contains("R-18G")
         if (!R18on) {
-            val isr18 = tags.contains("R-18") || tags.contains("R-18G")
+
             if (isr18) {
                 GlideApp.with(imageView.context)
                     .load(ContextCompat.getDrawable(mContext, R.drawable.h))
@@ -286,6 +288,8 @@ class RankingAdapter(
                     }
                 })
         }
+
+
     }
 
 

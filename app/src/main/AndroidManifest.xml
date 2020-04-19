@@ -21,6 +21,7 @@
             android:label="@string/title_activity_img_d"
             android:theme="@style/AppThemeBase.NoActionBar"></activity>
         <activity android:name=".activity.BlockActivity" />
+        <activity android:name=".activity.BlockUserActivity" />
         <activity android:name=".activity.NovelActivity" />
         <activity
             android:name=".activity.ProgressActivity"

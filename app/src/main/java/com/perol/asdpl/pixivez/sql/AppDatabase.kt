@@ -32,11 +32,12 @@ import com.perol.asdpl.pixivez.sql.dao.BlockTagDao
 import com.perol.asdpl.pixivez.sql.dao.BlockUserDao
 import com.perol.asdpl.pixivez.sql.dao.IllustDao
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
+import com.perol.asdpl.pixivez.sql.entity.BlockUserEntity
 import com.perol.asdpl.pixivez.sql.entity.Illust
 
 @Database(
-    entities = [SearchHistoryEntity::class, IllustBeanEntity::class, UserEntity::class, Illust::class, BlockTagEntity::class],
-    version = 6,
+    entities = [SearchHistoryEntity::class, IllustBeanEntity::class, UserEntity::class, Illust::class, BlockTagEntity::class, BlockUserEntity::class],
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

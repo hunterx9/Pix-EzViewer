@@ -26,7 +26,6 @@ package com.perol.asdpl.pixivez.activity
 
 import android.Manifest
 import android.app.Activity
-import android.app.DownloadManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -53,7 +52,6 @@ import com.perol.asdpl.pixivez.manager.DownloadManagerActivity
 import com.perol.asdpl.pixivez.objects.ThemeUtil
 import com.perol.asdpl.pixivez.repository.AppDataRepository
 import com.perol.asdpl.pixivez.services.GlideApp
-import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.sql.UserEntity
 import kotlinx.android.synthetic.main.app_bar_hello_m.*
 import kotlinx.coroutines.runBlocking
@@ -125,6 +123,9 @@ class HelloMActivity : RinkActivity(), NavigationView.OnNavigationItemSelectedLi
             }
             R.id.nav_blocklist -> {
                 startActivity(Intent(this, BlockActivity::class.java))
+            }
+            R.id.nav_user_blocklist -> {
+                startActivity(Intent(this, BlockUserActivity::class.java))
             }
         }
 

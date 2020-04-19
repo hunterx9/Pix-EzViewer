@@ -55,7 +55,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -83,6 +85,7 @@ import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.sql.AppDatabase
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
+import com.perol.asdpl.pixivez.sql.entity.BlockUserEntity
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 import com.perol.asdpl.pixivez.viewmodel.ProgressInfo
 import com.shehuan.niv.NiceImageView
@@ -104,7 +107,7 @@ import kotlin.collections.ArrayList
 
 class PictureXAdapter(
     private val pictureXViewModel: PictureXViewModel,
-    private val data: Illust,
+    private var data: Illust,
     private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val imageUrls = ArrayList<String>()
@@ -115,6 +118,7 @@ class PictureXAdapter(
         this.mUserPicLongClick = listener
 
     }
+
 
     fun setListener(listener: () -> Unit) {
         this.mListen = listener
@@ -165,11 +169,13 @@ class PictureXAdapter(
     class DetailViewHolder(
         var binding: ViewPicturexDetailBinding
     ) : RecyclerView.ViewHolder(binding.root) {
+        private val illustUser = itemView.findViewById<TextView>(R.id.textView21)
         private val tagFlowLayout = itemView.findViewById<TagFlowLayout>(R.id.tagflowlayout)
         private val captionTextView = itemView.findViewById<TextView>(R.id.textview_caption)
         private val btnTranslate = itemView.findViewById<TextView>(R.id.btn_translate)
         private val viewCommentTextView = itemView.findViewById<TextView>(R.id.textview_viewcomment)
         private val imageView = itemView.findViewById<NiceImageView>(R.id.imageView5)
+        private val recommendationText = itemView.findViewById<TextView>(R.id.aboutpic)
         private val imageButtonDownload =
             itemView.findViewById<ImageButton>(R.id.imagebutton_download)
 
@@ -201,6 +207,32 @@ class PictureXAdapter(
                 intent.putExtra("data", s.user.id)
                 mContext.startActivity(intent)
             }
+
+            recommendationText.setOnClickListener {
+
+            }
+            illustUser.setOnLongClickListener {
+                MaterialDialog(mContext).show {
+                    title(R.string.add_to_block_tag_list)
+                    negativeButton(android.R.string.cancel)
+                    positiveButton(android.R.string.ok) {
+                        runBlocking {
+                            withContext(Dispatchers.IO) {
+                                AppDatabase.getInstance(PxEZApp.instance).blockUserDao()
+                                    .insert(
+                                        BlockUserEntity(
+                                            name = s.user.name,
+                                            account = s.user.account
+                                        )
+                                    )
+                            }
+                            EventBus.getDefault().post(AdapterRefreshEvent())
+                        }
+                    }
+                }
+                true
+            }
+
             if (s.caption.isNotBlank())
                 binding.html = Html.fromHtml(s.caption)
             else
@@ -416,6 +448,8 @@ class PictureXAdapter(
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
+
         if (holder is PictureViewHolder) {
             val imageView = holder.itemView.findViewById<ImageView>(R.id.imageview_pic)
             GlideApp.with(imageView).load(imageUrls[position]).placeholder(R.color.black)
@@ -655,9 +689,13 @@ class PictureXAdapter(
                     play.visibility = View.VISIBLE
                 }, {})
             }
+
             GlideApp.with(imageViewGif!!).load(data.image_urls.medium).placeholder(R.color.white)
                 .transition(DrawableTransitionOptions.withCrossFade())
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .into(object : DrawableImageViewTarget(imageViewGif) {
+
 
                     override fun onResourceReady(
                         resource: Drawable,
@@ -796,4 +834,5 @@ class PictureXAdapter(
         progressBar?.visibility = View.GONE
         createAnimationFrame(data, imageViewGif!!, duration)
     }
+
 }

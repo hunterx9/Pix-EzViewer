@@ -32,11 +32,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.perol.asdpl.pixivez.R
 import com.perol.asdpl.pixivez.activity.BlockActivity
 import com.perol.asdpl.pixivez.activity.UserMActivity
@@ -47,9 +49,15 @@ import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragmentV2
 import com.perol.asdpl.pixivez.objects.Toasty
 import com.perol.asdpl.pixivez.services.GlideApp
+import com.perol.asdpl.pixivez.services.PxEZApp
+import com.perol.asdpl.pixivez.sql.AppDatabase
+import com.perol.asdpl.pixivez.sql.entity.BlockUserEntity
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 import kotlinx.android.synthetic.main.fragment_picture_x.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -66,6 +74,8 @@ private const val ARG_PARAM1 = "param1"
  */
 class PictureXFragment : BaseFragmentV2() {
 
+    private var offset: Int = 0
+    private var isLoading: Int = 0
     private var param1: Long? = null
     private lateinit var pictureXViewModel: PictureXViewModel
     fun loadData() {
@@ -80,6 +90,7 @@ class PictureXFragment : BaseFragmentV2() {
             pictureXAdapter?.setViewCommentListen { }
             pictureXAdapter?.setUserPicLongClick { }
         }
+
         super.onDestroy()
 
     }
@@ -91,11 +102,13 @@ class PictureXFragment : BaseFragmentV2() {
 
     override fun onPause() {
         pictureXAdapter?.animationDrawable?.stop()
+
         super.onPause()
 
     }
 
     private var pictureXAdapter: PictureXAdapter? = null
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
@@ -112,7 +125,7 @@ class PictureXFragment : BaseFragmentV2() {
             pictureXViewModel.illustDetailResponse.value?.illust?.tags?.forEach {
                 if (blockTags.contains(it.name)) needBlock = true
             }
-            if(blockUsers.contains(pictureXViewModel.illustDetailResponse.value?.illust?.user?.name)) {
+            if (blockUsers.contains(pictureXViewModel.illustDetailResponse.value?.illust?.user?.name)) {
                 needBlockUser = true
             }
             if (!needBlock || !needBlockUser) {
@@ -121,6 +134,7 @@ class PictureXFragment : BaseFragmentV2() {
             }
         }
     }
+
     private fun initViewModel() {
 
         pictureXViewModel = ViewModelProvider(this).get(PictureXViewModel::class.java)
@@ -145,6 +159,7 @@ class PictureXFragment : BaseFragmentV2() {
                 if (it.illust.meta_pages.isNotEmpty())
                     position = it.illust.meta_pages.size
                 else position = 1
+                val illst1 = it.illust
                 pictureXAdapter =
                     PictureXAdapter(pictureXViewModel, it.illust, requireContext()).also {
                         it.setListener {
@@ -156,7 +171,44 @@ class PictureXFragment : BaseFragmentV2() {
                                     0
                                 )
                             }
-                            pictureXViewModel.getRelative(param1!!)
+
+                            if (!recyclerview.canScrollVertically(1)) {
+                                pictureXViewModel.getRelativeWithOffset(param1!!, offset)
+                                offset += 30
+                            }
+                            recyclerview.addOnScrollListener(object :
+                                RecyclerView.OnScrollListener() {
+                                override fun onScrollStateChanged(
+                                    @NonNull recyclerView: RecyclerView,
+                                    newState: Int
+                                ) {
+                                    super.onScrollStateChanged(recyclerView, newState)
+                                }
+
+                                override fun onScrolled(
+                                    @NonNull recyclerView: RecyclerView,
+                                    dx: Int,
+                                    dy: Int
+                                ) {
+                                    super.onScrolled(recyclerView, dx, dy)
+                                    val linearLayoutManager =
+                                        recyclerView.layoutManager as LinearLayoutManager?
+                                    if (pictureXViewModel.isLoaded && isLoading < 4) {
+
+
+                                        if (!recyclerView.canScrollVertically(1) && isLoading < 4) {
+                                            //bottom of list!
+
+                                            pictureXViewModel.getRelativeWithOffset(
+                                                param1!!,
+                                                offset
+                                            )
+                                            offset += 30
+                                            isLoading++
+                                        }
+                                    }
+                                }
+                            })
 
                         }
                         it.setViewCommentListen {
@@ -172,11 +224,37 @@ class PictureXFragment : BaseFragmentV2() {
 
                 recyclerview.adapter = pictureXAdapter
 
+
                 imageView5.setOnClickListener { ot ->
                     val intent = Intent(context, UserMActivity::class.java)
                     intent.putExtra("data", it.illust.user.id)
                     startActivity(intent)
                 }
+
+                val illust = it.illust
+                //textview21 is illust author user
+                textView21.setOnLongClickListener {
+                    MaterialDialog(requireContext()).show {
+                        title(R.string.add_to_block_tag_list)
+                        negativeButton(android.R.string.cancel)
+                        positiveButton(android.R.string.ok) {
+                            runBlocking {
+                                withContext(Dispatchers.IO) {
+                                    AppDatabase.getInstance(PxEZApp.instance).blockUserDao()
+                                        .insert(
+                                            BlockUserEntity(
+                                                name = illust.user.name,
+                                                account = illust.user.account
+                                            )
+                                        )
+                                }
+                                EventBus.getDefault().post(AdapterRefreshEvent())
+                            }
+                        }
+                    }
+                    true
+                }
+
                 fab.show()
 
             }

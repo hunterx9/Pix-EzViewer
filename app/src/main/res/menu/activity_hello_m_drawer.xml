@@ -41,6 +41,10 @@
                 android:id="@+id/nav_blocklist"
                 android:title="@string/block_tag"
                 android:icon="@drawable/ic_action_fold" />
+            <item
+                android:id="@+id/nav_user_blocklist"
+                android:icon="@drawable/ic_action_fold"
+                android:title="Blocked Users" />
         </menu>
     </item>
 

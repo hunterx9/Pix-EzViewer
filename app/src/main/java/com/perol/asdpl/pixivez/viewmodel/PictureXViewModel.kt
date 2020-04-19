@@ -24,7 +24,9 @@
 
 package com.perol.asdpl.pixivez.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.perol.asdpl.pixivez.objects.CrashHandler.TAG
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.BookMarkDetailResponse
 import com.perol.asdpl.pixivez.responses.Illust
@@ -40,7 +42,8 @@ import io.reactivex.schedulers.Schedulers
 import java.io.File
 
 class PictureXViewModel : BaseViewModel() {
-    val newRec = arrayListOf<Illust>()
+    var isLoaded: Boolean = true
+    var newRec = arrayListOf<Illust>()
     val illustDetailResponse = MutableLiveData<IllustDetailResponse?>()
     val retrofitRespository: RetrofitRepository = RetrofitRepository.getInstance()
     val aboutPics = MutableLiveData<ArrayList<Illust>>()
@@ -148,25 +151,28 @@ class PictureXViewModel : BaseViewModel() {
         disposables.add(retrofitRespository.getIllustRecommended(long).subscribe({
 
             aboutPics.value = it.illusts as ArrayList<Illust>?
-            newRec.addAll(it.illusts as ArrayList<Illust>)
+
+
+        }, {}, {}))
+    }
+
+    fun getRelativeWithOffset(long: Long, offset:Int) {
+
+        if(offset == 0) getRelative(long) else
             disposables.add(
                 retrofitRespository.getIllustRecommendedNext(
                     long,
-                    30
+                    offset
                 ).subscribe({ nextIt: RecommendResponse ->
-                    newRec.addAll(nextIt.illusts as ArrayList<Illust>)
-                    disposables.add(
-                        retrofitRespository.getIllustRecommendedNext(
-                            long,
-                            60
-                        ).subscribe({ nextIt2: RecommendResponse ->
-                            newRec.addAll(nextIt2.illusts as ArrayList<Illust>)
-                            aboutPics.value = newRec
-                        }, {}, {})
-                    )
+
+                    aboutPics.value?.addAll(nextIt.illusts )
+                    newRec = aboutPics.value!!
+                    aboutPics.value = newRec
+                    isLoaded = true
+                    Log.d(TAG, "getRelativeWithOffset: ${newRec.size} and offset is $offset")
 
                 }, {}, {}))
-        }, {}, {}))
+
     }
 
     fun fabClick() {

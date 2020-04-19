@@ -80,15 +80,10 @@ class HelloMRecommendFragment : BaseFragment() {
     fun onEvent(event: AdapterRefreshEvent) {
         runBlocking {
             val allTags = blockViewModel.getAllTags()
-            val allUsers = blockViewModel.getAllUsers()
             blockTags = allTags.map {
                 it.name
             }
-            blockUsers = allUsers.map {
-                it.name
-            }
             rankingAdapter.blockTags = blockTags
-            rankingAdapter.blockUsers = blockUsers
             rankingAdapter.notifyDataSetChanged()
         }
     }
@@ -196,8 +191,7 @@ class HelloMRecommendFragment : BaseFragment() {
             R.layout.view_recommand_item,
             null,
             isR18on,
-            blockTags,
-            blockUsers
+            blockTags, blockUsers
         )
         bannerView = inflater.inflate(R.layout.header_recom, container, false)
         rankingAdapter.apply {
