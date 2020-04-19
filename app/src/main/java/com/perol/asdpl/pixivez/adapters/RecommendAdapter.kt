@@ -192,14 +192,14 @@ class RecommendAdapter(
                 helper.setText(R.id.textview_num, "CoM")
             }
         }
-        imageView.setTag(R.id.tag_first, item.image_urls.medium)
+        imageView.setTag(R.id.tag_first, item.image_urls.large)
         val needsmall = item.height > 1500 || item.height > 1500
-        val loadurl = if (needsmall) {
-            item.image_urls.square_medium
-        } else {
-            item.image_urls.medium
-        }
-
+//        val loadurl = if (needsmall) {
+//            item.image_urls.square_medium
+//        } else {
+//            item.image_urls.medium
+//        }
+        val loadurl = item.image_urls.large
         val isr18 = tags.contains("R-18") || tags.contains("R-18G")
         if (!R18on) {
             if (isr18) {
@@ -216,7 +216,7 @@ class RecommendAdapter(
                             resource: Drawable,
                             transition: Transition<in Drawable>?
                         ) {
-                            if (imageView.getTag(R.id.tag_first) === item.image_urls.medium) {
+                            if (imageView.getTag(R.id.tag_first) === item.image_urls.large) {
                                 super.onResourceReady(resource, transition)
                             }
                         }
@@ -244,7 +244,7 @@ class RecommendAdapter(
                         resource: Drawable,
                         transition: Transition<in Drawable>?
                     ) {
-                        if (imageView.getTag(R.id.tag_first) === item.image_urls.medium) {
+                        if (imageView.getTag(R.id.tag_first) === item.image_urls.large) {
                             super.onResourceReady(resource, transition)
                         }
 

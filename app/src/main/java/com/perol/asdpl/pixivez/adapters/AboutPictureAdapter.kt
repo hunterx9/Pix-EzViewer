@@ -24,20 +24,52 @@
 
 package com.perol.asdpl.pixivez.adapters
 
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.services.GlideApp
+import com.perol.asdpl.pixivez.sql.entity.RecommendIllust
 
-class AboutPictureAdapter(layoutResId: Int) : BaseQuickAdapter<String, BaseViewHolder>(layoutResId) {
+class AboutPictureAdapter(layoutResId: Int) :
+    BaseQuickAdapter<RecommendIllust, BaseViewHolder>(layoutResId) {
 
-    override fun convert(helper: BaseViewHolder, item: String) {
+    override fun convert(helper: BaseViewHolder, item: RecommendIllust) {
         val imageView = helper.getView<ImageView>(R.id.imageview_aboutpic)
-        if (helper.layoutPosition % 2 != 0)
-            GlideApp.with(imageView.context).load(item).placeholder(R.color.white).transition(withCrossFade()).centerInside().into(imageView)
+        val imageCount = helper.getView<TextView>(R.id.tv_image_count)
+        val likeImage = helper.getView<ImageView>(R.id.img_like)
+        if (item.is_bookmarked)
+            likeImage.setImageResource(R.drawable.ic_action_heart_color_red)
         else
-            GlideApp.with(imageView.context).load(item).placeholder(R.color.gray).transition(withCrossFade()).centerInside().into(imageView)
+            likeImage.setImageResource(R.drawable.ic_action_heart_red)
+        likeImage.setOnClickListener {
+            val retrofit = RetrofitRepository.getInstance()
+            if (item.is_bookmarked) {
+                retrofit.postUnlikeIllust(item.id).subscribe({
+                    likeImage.setImageResource(R.drawable.ic_action_heart_red)
+
+                }, {}, {})
+            } else {
+                retrofit.postLikeIllust(item.id)!!.subscribe({
+                    likeImage.setImageResource(R.drawable.ic_action_heart_color_red)
+                }, {}, {})
+            }
+        }
+        if (item.type == "") {
+            imageCount.visibility = View.GONE
+        } else {
+            imageCount.text = item.type
+        }
+        if (helper.layoutPosition % 2 != 0)
+            GlideApp.with(imageView.context).load(item.illust).placeholder(R.color.white)
+                .transition(withCrossFade()).centerInside().into(imageView)
+        else
+            GlideApp.with(imageView.context).load(item.illust).placeholder(R.color.gray)
+                .transition(withCrossFade()).centerInside().into(imageView)
     }
 }
+

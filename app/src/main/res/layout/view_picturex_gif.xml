@@ -16,13 +16,20 @@
         android:layout_width="50dp"
         app:progress_stroke_width="3dp"
         android:layout_height="50dp" />
-    <ImageView
-        android:tint="@color/white"
-        android:src="@drawable/ic_action_play"
-        android:id="@+id/imageview_play"
-        android:layout_gravity="center"
-        android:alpha="0.9"
-        android:layout_width="40dp"
-        android:layout_marginLeft="2dp"
-        android:layout_height="40dp" />
+
+    <RelativeLayout
+        android:id="@+id/imageview_play_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/imageview_play"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:alpha="0.9"
+            android:src="@drawable/ic_action_play"
+            android:tint="@color/white" />
+    </RelativeLayout>
+
 </FrameLayout>

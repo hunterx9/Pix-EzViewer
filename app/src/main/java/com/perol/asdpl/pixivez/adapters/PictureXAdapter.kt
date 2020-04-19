@@ -45,17 +45,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
-
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -84,8 +80,10 @@ import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.services.Works
 import com.perol.asdpl.pixivez.sql.AppDatabase
+import com.perol.asdpl.pixivez.sql.SearchHistoryEntity
 import com.perol.asdpl.pixivez.sql.entity.BlockTagEntity
 import com.perol.asdpl.pixivez.sql.entity.BlockUserEntity
+import com.perol.asdpl.pixivez.sql.entity.RecommendIllust
 import com.perol.asdpl.pixivez.viewmodel.PictureXViewModel
 import com.perol.asdpl.pixivez.viewmodel.ProgressInfo
 import com.shehuan.niv.NiceImageView
@@ -178,6 +176,7 @@ class PictureXAdapter(
         private val recommendationText = itemView.findViewById<TextView>(R.id.aboutpic)
         private val imageButtonDownload =
             itemView.findViewById<ImageButton>(R.id.imagebutton_download)
+
 
         fun updateWithPage(
             mContext: Context,
@@ -300,13 +299,32 @@ class PictureXAdapter(
                             name.setTextColor(Color.RED)
                         }
                         translateName.setOnClickListener {
+                            val searchHistory = s.tags[position].name
+
                             val bundle = Bundle()
-                            bundle.putString("searchword", s.tags[position].name)
+                            bundle.putString("searchword", searchHistory)
                             val intent = Intent(context, SearchResultActivity::class.java)
                             intent.putExtras(bundle)
                             context.startActivity(intent)
                         }
                         name.setOnClickListener {
+                            var appDatabase = AppDatabase.getInstance(PxEZApp.instance)
+                            Observable.create<Int> {
+                                val sTag = s.tags[position]
+                                if (sTag.translated_name != null)
+                                    appDatabase.searchhistoryDao()
+                                        .insert(SearchHistoryEntity(sTag.name + "|" + sTag.translated_name))
+                                else {
+                                    appDatabase.searchhistoryDao()
+                                        .insert(SearchHistoryEntity(sTag.name))
+
+                                }
+                                it.onNext(1)
+                            }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                                .doOnError {
+
+                                }.subscribe {
+                            }
                             val bundle = Bundle()
                             bundle.putString("searchword", s.tags[position].name)
                             val intent = Intent(context, SearchResultActivity::class.java)
@@ -371,7 +389,8 @@ class PictureXAdapter(
 
     class RelativeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun updateWithPage(s: AboutPictureAdapter, mContext: Context) {
-            recyclerView.layoutManager = GridLayoutManager(mContext, 3)
+//            recyclerView.layoutManager = GridLayoutManager(mContext, 1)
+            recyclerView.layoutManager = LinearLayoutManager(mContext)
             recyclerView.adapter = s
 
         }
@@ -591,6 +610,8 @@ class PictureXAdapter(
 //            (mContext as FragmentActivity).supportStartPostponedEnterTransition()
         } else if (holder is GifViewHolder) {
             progressBar = holder.itemView.findViewById<CircleProgressBar>(R.id.progressbar_gif)
+            val playLayout =
+                holder.itemView.findViewById<RelativeLayout>(R.id.imageview_play_layout)
             val play = holder.itemView.findViewById<ImageView>(R.id.imageview_play)
             imageViewGif = holder.itemView.findViewById(R.id.imageview_gif)
             imageViewGif!!.setOnLongClickListener {
@@ -674,9 +695,9 @@ class PictureXAdapter(
                 }
                 true
             }
-            play!!.setOnClickListener {
+            playLayout!!.setOnClickListener {
                 play.visibility = View.GONE
-                Toasty.info(PxEZApp.instance, "Downloading...", Toast.LENGTH_SHORT).show()
+//                Toasty.info(PxEZApp.instance, "Downloading...", Toast.LENGTH_SHORT).show()
                 pictureXViewModel.loadGif(data.id).flatMap {
                     duration = it.ugoira_metadata.frames[0].delay
                     pictureXViewModel.downloadZip(
@@ -772,9 +793,28 @@ class PictureXAdapter(
         if (it.isEmpty()) {
             return
         }
-        val list = ArrayList<String>()
+        val list = ArrayList<RecommendIllust>()
+
         it.forEach {
-            list.add(it.image_urls.square_medium)
+            var type: String = ""
+            when (it.type) {
+                "illust" -> if (it.meta_pages.isNotEmpty()) {
+
+                    type = it.meta_pages.size.toString()
+                } else {
+                    type = ""
+                }
+                "ugoira" -> {
+
+                    type = "Gif"
+                }
+                else -> {
+
+                    type = "CoM"
+                }
+            }
+            val illust = RecommendIllust(it.image_urls.large, type, it.is_bookmarked, it.id )
+            list.add(illust)
         }
 
         aboutPictureAdapter.setNewData(list)
@@ -834,5 +874,6 @@ class PictureXAdapter(
         progressBar?.visibility = View.GONE
         createAnimationFrame(data, imageViewGif!!, duration)
     }
+
 
 }
