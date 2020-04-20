@@ -89,6 +89,7 @@
             android:label="@string/title_activity_login" />
         <activity
             android:name=".activity.PictureActivity"
+            android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".activity.ZoomActivity" />
         <activity android:name=".activity.UserFollowActivity" />

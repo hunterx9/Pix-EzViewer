@@ -48,6 +48,7 @@ import com.perol.asdpl.pixivez.dialog.CommentDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragmentV2
 import com.perol.asdpl.pixivez.objects.Toasty
+import com.perol.asdpl.pixivez.objects.`interface`.NotifyInteface
 import com.perol.asdpl.pixivez.services.GlideApp
 import com.perol.asdpl.pixivez.services.PxEZApp
 import com.perol.asdpl.pixivez.sql.AppDatabase
@@ -172,8 +173,9 @@ class PictureXFragment : BaseFragmentV2() {
                                 )
                             }
 
+
                             if (!recyclerview.canScrollVertically(1)) {
-                                pictureXViewModel.getRelativeWithOffset(param1!!, offset)
+                                pictureXViewModel.getRelativeWithOffset(param1!!, offset )
                                 offset += 30
                             }
                             recyclerview.addOnScrollListener(object :
@@ -193,9 +195,12 @@ class PictureXFragment : BaseFragmentV2() {
                                     super.onScrolled(recyclerView, dx, dy)
                                     val linearLayoutManager =
                                         recyclerView.layoutManager as LinearLayoutManager?
-                                    if (pictureXViewModel.isLoaded && isLoading < 4) {
+                                    if (isLoading < 4) {
 
-
+                                        if(pictureXViewModel.isLoaded){
+                                            pictureXAdapter?.notifyDataSetChanged()
+                                            pictureXViewModel.isLoaded = false
+                                        }
                                         if (!recyclerView.canScrollVertically(1) && isLoading < 4) {
                                             //bottom of list!
 

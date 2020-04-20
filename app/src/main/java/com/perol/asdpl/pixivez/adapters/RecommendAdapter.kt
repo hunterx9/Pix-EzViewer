@@ -144,6 +144,14 @@ class RecommendAdapter(
         mContext.theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
 
         val colorPrimary = typedValue.resourceId;
+
+        val likeImage =
+            helper.itemView.findViewById<TextView>(R.id.like)
+        if (item.is_bookmarked) {
+            likeImage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_heart_color_red,0,0,0)
+        } else {
+            likeImage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_heart_red,0,0,0)
+        }
         helper.setText(R.id.title, item.title).setTextColor(
             R.id.like, if (item.is_bookmarked) {
                 Color.YELLOW
@@ -161,6 +169,7 @@ class RecommendAdapter(
                 if (item.is_bookmarked) {
                     retrofit.postUnlikeIllust(item.id).subscribe({
                         textView.setTextColor(ContextCompat.getColor(mContext, colorPrimary))
+                        likeImage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_heart_color_red,0,0,0)
                         item.is_bookmarked = false
                     }, {}, {})
                 } else {
@@ -168,6 +177,7 @@ class RecommendAdapter(
                         textView.setTextColor(
                             Color.YELLOW
                         )
+                        likeImage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_heart_red,0,0,0)
                         item.is_bookmarked = true
                     }, {}, {})
                 }

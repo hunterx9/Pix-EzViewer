@@ -64,11 +64,7 @@
             android:text="title"
             android:textSize="14sp"
             android:transitionName="title"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:visibility="gone" />
 
 
         <LinearLayout
@@ -80,8 +76,8 @@
                 android:id="@+id/like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_marginEnd="@dimen/dp_4"
+                android:background="@drawable/rounded_corner"
                 android:drawableLeft="@drawable/ic_action_heart_red"
                 android:drawablePadding="2dp"
                 android:padding="8dp"

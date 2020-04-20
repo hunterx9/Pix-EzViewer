@@ -28,6 +28,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
+import com.bumptech.glide.request.RequestOptions
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.perol.asdpl.pixivez.R
@@ -41,21 +42,23 @@ class AboutPictureAdapter(layoutResId: Int) :
     override fun convert(helper: BaseViewHolder, item: RecommendIllust) {
         val imageView = helper.getView<ImageView>(R.id.imageview_aboutpic)
         val imageCount = helper.getView<TextView>(R.id.tv_image_count)
-        val likeImage = helper.getView<ImageView>(R.id.img_like)
+        val likeImage = helper.getView<TextView>(R.id.tv_img_like)
+        likeImage.text = item.bookmark_count
         if (item.is_bookmarked)
-            likeImage.setImageResource(R.drawable.ic_action_heart_color_red)
+            likeImage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_heart_color_red,0,0,0)
         else
-            likeImage.setImageResource(R.drawable.ic_action_heart_red)
+            likeImage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_heart_red,0,0,0)
+
         likeImage.setOnClickListener {
             val retrofit = RetrofitRepository.getInstance()
             if (item.is_bookmarked) {
                 retrofit.postUnlikeIllust(item.id).subscribe({
-                    likeImage.setImageResource(R.drawable.ic_action_heart_red)
+                    likeImage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_heart_red,0,0,0)
 
                 }, {}, {})
             } else {
                 retrofit.postLikeIllust(item.id)!!.subscribe({
-                    likeImage.setImageResource(R.drawable.ic_action_heart_color_red)
+                    likeImage.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_heart_color_red,0,0,0)
                 }, {}, {})
             }
         }
@@ -66,10 +69,10 @@ class AboutPictureAdapter(layoutResId: Int) :
         }
         if (helper.layoutPosition % 2 != 0)
             GlideApp.with(imageView.context).load(item.illust).placeholder(R.color.white)
-                .transition(withCrossFade()).centerInside().into(imageView)
+                .transition(withCrossFade()).centerInside().into(imageView).clearOnDetach()
         else
             GlideApp.with(imageView.context).load(item.illust).placeholder(R.color.gray)
-                .transition(withCrossFade()).centerInside().into(imageView)
+                .transition(withCrossFade()).centerInside().into(imageView).clearOnDetach()
     }
 }
 

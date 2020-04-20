@@ -27,6 +27,7 @@ package com.perol.asdpl.pixivez.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.perol.asdpl.pixivez.objects.CrashHandler.TAG
+import com.perol.asdpl.pixivez.objects.`interface`.NotifyInteface
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.BookMarkDetailResponse
 import com.perol.asdpl.pixivez.responses.Illust
@@ -39,10 +40,11 @@ import com.perol.asdpl.pixivez.sql.IllustBeanEntity
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import okhttp3.internal.notify
 import java.io.File
 
 class PictureXViewModel : BaseViewModel() {
-    var isLoaded: Boolean = true
+    var isLoaded: Boolean = false
     var newRec = arrayListOf<Illust>()
     val illustDetailResponse = MutableLiveData<IllustDetailResponse?>()
     val retrofitRespository: RetrofitRepository = RetrofitRepository.getInstance()
@@ -166,8 +168,10 @@ class PictureXViewModel : BaseViewModel() {
                 ).subscribe({ nextIt: RecommendResponse ->
 
                     aboutPics.value?.addAll(nextIt.illusts )
+
                     newRec = aboutPics.value!!
                     aboutPics.value = newRec
+
                     isLoaded = true
                     Log.d(TAG, "getRelativeWithOffset: ${newRec.size} and offset is $offset")
 

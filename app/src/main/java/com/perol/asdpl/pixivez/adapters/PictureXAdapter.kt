@@ -48,6 +48,7 @@ import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
@@ -389,8 +390,8 @@ class PictureXAdapter(
 
     class RelativeHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun updateWithPage(s: AboutPictureAdapter, mContext: Context) {
-//            recyclerView.layoutManager = GridLayoutManager(mContext, 1)
-            recyclerView.layoutManager = LinearLayoutManager(mContext)
+            recyclerView.layoutManager = GridLayoutManager(mContext, 2)
+//            recyclerView.layoutManager = LinearLayoutManager(mContext)
             recyclerView.adapter = s
 
         }
@@ -813,7 +814,7 @@ class PictureXAdapter(
                     type = "CoM"
                 }
             }
-            val illust = RecommendIllust(it.image_urls.large, type, it.is_bookmarked, it.id )
+            val illust = RecommendIllust(it.image_urls.large, type, it.is_bookmarked, it.id , it.total_bookmarks.toString())
             list.add(illust)
         }
 

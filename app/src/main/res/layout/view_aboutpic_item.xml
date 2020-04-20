@@ -1,37 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="300dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginEnd="4dp"
+    >
 
     <ImageView
         android:id="@+id/imageview_aboutpic"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
-        android:adjustViewBounds="true" />
+        android:layout_height="300dp"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_image_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+
         android:background="@color/black_overlay"
         android:padding="8dp"
         android:text="100"
         android:textColor="@color/white"
-        android:textFontWeight="14" />
+        android:textFontWeight="14"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageview_aboutpic" />
 
-    <ImageView
-        android:id="@+id/img_like"
-        android:layout_width="40dp"
+    <TextView
+        android:id="@+id/tv_img_like"
+        android:layout_width="wrap_content"
+
         android:layout_height="40dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginStart="16dp"
         android:layout_marginBottom="12dp"
-        android:padding="8dp" />
+        android:background="@drawable/rounded_corner"
+        android:padding="8dp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/imageview_aboutpic"
+        app:layout_constraintStart_toStartOf="@+id/imageview_aboutpic" />
 
-</RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
